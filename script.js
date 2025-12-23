@@ -11,7 +11,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Unique user
+// User
 const userId = localStorage.getItem("userId") || (() => {
   const id = crypto.randomUUID();
   localStorage.setItem("userId", id);
@@ -66,6 +66,7 @@ function listenSongs(projectId) {
 function renderSong(id, data, projectId) {
   const li = document.createElement("li");
   li.className = "song";
+  if(data.noGo) li.classList.add("noGo");
   li.textContent = data.name;
 
   const row = document.createElement("div");
@@ -86,6 +87,7 @@ function renderSong(id, data, projectId) {
 
   const no = document.createElement("button");
   no.textContent = "🚫";
+  no.className = "noGoBtn";
   no.onclick = async () => {
     await updateDoc(doc(db, "projects", projectId, "songs", id), { noGo: !data.noGo });
   };
@@ -93,8 +95,9 @@ function renderSong(id, data, projectId) {
 
   const del = document.createElement("button");
   del.textContent = "🗑️";
+  del.className = "delBtn";
   del.onclick = async () => {
-    if (confirm("Song wirklich löschen?")) {
+    if(confirm("Song wirklich löschen?")) {
       await deleteDoc(doc(db, "projects", projectId, "songs", id));
     }
   };
