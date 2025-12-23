@@ -160,9 +160,3 @@ function vote(songId, value){
         localStorage.setItem(votedKey, JSON.stringify(voted));
     }
 }
-document.addEventListener("DOMContentLoaded", () => {
-    const toggle = document.getElementById("darkModeToggle");
-    toggle.addEventListener("click", () => {
-        document.body.classList.toggle("dark");
-    });
-});
