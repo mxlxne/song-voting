@@ -61,6 +61,7 @@ li {
 
 li.active { background: #4f46e5; }
 
+/* Songs */
 .song.noGo {
     opacity: .45;
     background: repeating-linear-gradient(
@@ -84,12 +85,12 @@ li.active { background: #4f46e5; }
     box-shadow: 0 0 8px rgba(255,255,255,.4);
 }
 
+/* Delete Buttons */
 .deleteProject {
     margin-left: auto;
     background: none;
     font-size: 1.1rem;
 }
-
 .deleteProject:hover {
     color: #e53935;
 }
