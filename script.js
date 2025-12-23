@@ -9,11 +9,19 @@ const firebaseConfig = {
   };
 
 
-firebase.initializeApp(firebaseConfig);
+// Firebase initialisieren
+const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// Dark Mode
+const darkToggle = document.getElementById("darkModeToggle");
+darkToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+});
+
 // Song hinzufügen
-function addSong() {
+const addBtn = document.getElementById("addSongBtn");
+addBtn.addEventListener("click", () => {
     const input = document.getElementById("songInput");
     const title = input.value.trim();
     if (!title) return;
@@ -26,12 +34,73 @@ function addSong() {
     });
 
     input.value = "";
-}
+});
 
-// Abstimmen / Löschen
+// Voting & Ranking
+db.collection("songs").onSnapshot(snapshot => {
+    const votingList = document.getElementById("votingList");
+    const rankingList = document.getElementById("rankingList");
+
+    votingList.innerHTML = "";
+    rankingList.innerHTML = "";
+
+    let songs = [];
+
+    snapshot.forEach(doc => {
+        const s = doc.data();
+        s.id = doc.id;
+        s.rating = s.noGo > 0 ? -100 : (s.votes ? s.total / s.votes : 0);
+        songs.push(s);
+    });
+
+    // Voting-Liste
+    songs.forEach(song => {
+        const li = document.createElement("li");
+        li.className = "song";
+        if (song.noGo > 0) li.classList.add("noGo");
+
+        const title = document.createElement("strong");
+        title.textContent = song.title;
+        li.appendChild(title);
+
+        // Sterne-Buttons
+        [1,2,3,4,5].forEach(n => {
+            const btn = document.createElement("button");
+            btn.textContent = n;
+            btn.addEventListener("click", () => vote(song.id, n));
+            li.appendChild(btn);
+        });
+
+        // No-Go
+        const noBtn = document.createElement("button");
+        noBtn.textContent = "🚫";
+        noBtn.className = "no";
+        noBtn.addEventListener("click", () => vote(song.id, "no"));
+        li.appendChild(noBtn);
+
+        // Löschen
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "🗑️";
+        delBtn.className = "delete";
+        delBtn.addEventListener("click", () => vote(song.id, "delete"));
+        li.appendChild(delBtn);
+
+        votingList.appendChild(li);
+    });
+
+    // Ranking-Liste (sortiert)
+    songs.sort((a,b) => b.rating - a.rating).forEach((song,index) => {
+        const li = document.createElement("li");
+        li.className = "song";
+        li.innerHTML = `<strong>#${index+1} ${song.title}</strong> <div class="rating">⭐ ${song.rating.toFixed(2)}</div>`;
+        rankingList.appendChild(li);
+    });
+});
+
+// Voting Funktion
 function vote(id, value) {
     const voted = JSON.parse(localStorage.getItem("votedSongs") || "[]");
-    
+
     if (value !== "delete" && voted.includes(id)) {
         alert("Du hast bereits für diesen Song abgestimmt!");
         return;
@@ -55,51 +124,3 @@ function vote(id, value) {
         localStorage.setItem("votedSongs", JSON.stringify(voted));
     }
 }
-
-function toggleDarkMode() {
-    document.body.classList.toggle("dark");
-}
-
-
-
-// 🔄 Live-Updates + Sortierung
-db.collection("songs").onSnapshot(snapshot => {
-    const votingList = document.getElementById("votingList");
-    const rankingList = document.getElementById("rankingList");
-
-    votingList.innerHTML = "";
-    rankingList.innerHTML = "";
-
-    let songs = [];
-
-    snapshot.forEach(doc => {
-        const s = doc.data();
-        s.id = doc.id;
-        s.rating = s.noGo > 0 ? -100 : (s.votes ? s.total / s.votes : 0);
-        songs.push(s);
-    });
-
-    // Voting-Liste
-    songs.forEach(song => {
-        const li = document.createElement("li");
-        li.className = "song";
-        if (song.noGo > 0) li.style.opacity = 0.4;
-
-        li.innerHTML = `
-            <strong>${song.title}</strong><br>
-            ${[1,2,3,4,5].map(n => `<button onclick="vote('${song.id}', ${n})">${n}</button>`).join("")}
-            <button class="no" onclick="vote('${song.id}', 'no')">🚫</button>
-            <button class="delete" onclick="vote('${song.id}', 'delete')">🗑️</button>
-        `;
-        votingList.appendChild(li);
-    });
-
-    // Ranking-Liste (sortiert)
-    songs.sort((a,b) => b.rating - a.rating).forEach((song,index) => {
-        const li = document.createElement("li");
-        li.className = "song";
-        li.innerHTML = `<strong>#${index+1} ${song.title}</strong> <div class="rating">⭐ ${song.rating.toFixed(2)}</div>`;
-        rankingList.appendChild(li);
-    });
-});
-
