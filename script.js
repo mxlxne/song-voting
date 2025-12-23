@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebas
 import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } 
     from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-// Firebase Config
+// Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAN8XBT9NazVeIgC_0-e2MIFtV9vMFljsQ",
   authDomain: "song-voting-f0763.firebaseapp.com",
@@ -11,25 +11,22 @@ const firebaseConfig = {
   messagingSenderId: "270124010704",
   appId: "1:270124010704:web:c31060bf57563de96e22d5"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// User ID
+// User
 const userId = localStorage.getItem("userId") || (() => {
     const id = crypto.randomUUID();
     localStorage.setItem("userId", id);
     return id;
 })();
 
-// DOM Elemente
+// DOM
 const projectView = document.getElementById("projectView");
 const songView = document.getElementById("songView");
-
 const projectInput = document.getElementById("projectInput");
 const createProjectBtn = document.getElementById("createProjectBtn");
 const projectList = document.getElementById("projectList");
-
 const songInput = document.getElementById("songInput");
 const addSongBtn = document.getElementById("addSongBtn");
 const votingList = document.getElementById("votingList");
@@ -84,7 +81,7 @@ function openProject(id) {
     listenSongs();
 }
 
-// Zurück zu Projekten
+// Zurück
 backBtn.onclick = () => {
     if (unsubscribe) unsubscribe();
     songView.classList.remove("active");
@@ -98,7 +95,7 @@ addSongBtn.onclick = async () => {
     songInput.value = "";
 };
 
-// Songs überwachen
+// Songs beobachten
 function listenSongs() {
     unsubscribe = onSnapshot(collection(db, "projects", currentProject, "songs"), snap => {
         votingList.innerHTML = "";
@@ -110,7 +107,7 @@ function listenSongs() {
     });
 }
 
-// Einzelnen Song rendern
+// Song rendern
 function renderSong(song) {
     const li = document.createElement("li");
     li.className = "song" + (song.noGo ? " noGo" : "");
@@ -158,7 +155,7 @@ function renderSong(song) {
     votingList.appendChild(li);
 }
 
-// Ranking rendern
+// Ranking
 function renderRanking(songs) {
     songs.map(s => ({ ...s, avg: (!s.noGo && s.votes.length) ? s.votes.reduce((a,v)=>a+v.value,0)/s.votes.length : null }))
          .sort((a,b) => (b.avg ?? -1) - (a.avg ?? -1))

@@ -27,6 +27,14 @@ h1 {
     margin-bottom: 16px;
 }
 
+/* Wrapper für Views */
+.view-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0; /* wichtig für Scrollen */
+}
+
 /* Views */
 .view {
     display: flex;
@@ -35,7 +43,6 @@ h1 {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.25s ease;
-    justify-content: flex-start; /* Inhalte oben */
 }
 
 .view.active {
@@ -43,19 +50,12 @@ h1 {
     pointer-events: auto;
 }
 
-#projectView, #songView {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    justify-content: flex-start;
-}
-
 #projectList, #votingList, #rankingList {
-    display: flex;
-    flex-direction: column;
-    flex: 1; /* füllt die View */
+    flex: 1;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
 }
 
@@ -149,14 +149,8 @@ ul {
 
 /* Songs */
 @keyframes songIn {
-    0% {
-        opacity: 0;
-        transform: translateY(-10px) scale(0.95);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    0% { opacity: 0; transform: translateY(-10px) scale(0.95); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .song {
@@ -182,7 +176,7 @@ ul {
 .voteRow {
     display: flex;
     gap: 6px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     margin-top: 8px;
 }
 
