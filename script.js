@@ -1,6 +1,9 @@
 // --- Firebase Module Imports ---
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
+// --- Firebase ES Module Imports ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, increment 
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
 
 // --- Firebase Config --- (MUSS VOR initializeApp stehen)
 const firebaseConfig = {
@@ -14,8 +17,8 @@ const firebaseConfig = {
 };
 
 // --- Firebase App initialisieren ---
- const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // ---------------- Dark Mode ----------------
 document.getElementById("darkModeToggle").addEventListener("click", () => {
