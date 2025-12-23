@@ -1,3 +1,4 @@
+// Firebase config 
 const firebaseConfig = {
     apiKey: "AIzaSyAN8XBT9NazVeIgC_0-e2MIFtV9vMFljsQ",
     authDomain: "song-voting-f0763.firebaseapp.com",
@@ -13,15 +14,13 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Dark Mode
-const darkToggle = document.getElementById("darkModeToggle");
-darkToggle.addEventListener("click", () => {
+// Dark Mode Toggle
+document.getElementById("darkModeToggle").addEventListener("click", () => {
     document.body.classList.toggle("dark");
 });
 
 // Song hinzufügen
-const addBtn = document.getElementById("addSongBtn");
-addBtn.addEventListener("click", () => {
+document.getElementById("addSongBtn").addEventListener("click", () => {
     const input = document.getElementById("songInput");
     const title = input.value.trim();
     if (!title) return;
@@ -71,14 +70,14 @@ db.collection("songs").onSnapshot(snapshot => {
             li.appendChild(btn);
         });
 
-        // No-Go
+        // No-Go Button
         const noBtn = document.createElement("button");
         noBtn.textContent = "🚫";
         noBtn.className = "no";
         noBtn.addEventListener("click", () => vote(song.id, "no"));
         li.appendChild(noBtn);
 
-        // Löschen
+        // Delete Button
         const delBtn = document.createElement("button");
         delBtn.textContent = "🗑️";
         delBtn.className = "delete";
