@@ -1,169 +1,95 @@
-/* ===========================
-   Allgemeine Styles / Dark Mode
-   =========================== */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: system-ui, sans-serif;
 }
 
 body {
-    background-color: #121212;
+    background: #121212;
     color: #f0f0f0;
-    line-height: 1.6;
-    min-height: 100vh;
     padding: 20px;
 }
 
-h1, h2, h3 {
-    margin-bottom: 15px;
-    color: #f0f0f0;
+h1, h2 {
+    margin-bottom: 12px;
 }
 
-button {
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    color: #f0f0f0;
-}
-
-button:hover {
-    opacity: 0.9;
-}
-
-/* ===========================
-   Buttons Styles
-   =========================== */
-button.primary {
-    background-color: #4f46e5;
-}
-
-button.no {
-    background-color: #e53935;
-}
-
-button.delete {
-    background-color: #777;
-}
-
-/* ===========================
-   Layout / Karten
-   =========================== */
 .card {
-    background-color: #1f1f1f;
-    border-radius: 12px;
+    background: #1f1f1f;
     padding: 20px;
+    border-radius: 14px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 18px rgba(0,0,0,.35);
 }
 
 input {
-    padding: 10px 12px;
-    width: calc(100% - 24px);
+    width: 100%;
+    padding: 12px;
     margin-bottom: 10px;
-    border-radius: 8px;
+    background: #2b2b2b;
     border: 1px solid #444;
-    background-color: #2b2b2b;
-    color: #f0f0f0;
-}
-
-/* ===========================
-   Projektliste
-   =========================== */
-ul#projectList {
-    list-style: none;
-    max-height: 250px;
-    overflow-y: auto;
-    padding-left: 0;
-}
-
-ul#projectList li {
-    padding: 10px 12px;
-    margin-bottom: 8px;
     border-radius: 10px;
-    background-color: #2b2b2b;
+    color: #fff;
+}
+
+button {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: none;
     cursor: pointer;
-    transition: background 0.2s;
-}
-
-ul#projectList li:hover {
-    background-color: #3a3a3a;
-}
-
-ul#projectList li.active {
-    background-color: #4f46e5;
     color: white;
+    font-weight: 600;
 }
 
-/* ===========================
-   Songs / Voting
-   =========================== */
-ul#votingList, ul#rankingList {
-    list-style: none;
-    padding-left: 0;
-    margin-top: 10px;
-}
+button.primary { background: #4f46e5; }
+button.no { background: #e53935; }
+button.delete { background: #777; }
 
-ul#votingList li, ul#rankingList li {
-    background-color: #1f1f1f;
-    border-radius: 10px;
-    padding: 10px;
+ul { list-style: none; }
+
+li {
+    background: #2b2b2b;
+    padding: 12px;
+    border-radius: 12px;
     margin-bottom: 10px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
+    gap: 6px;
 }
 
-ul#votingList li.song.noGo {
-    opacity: 0.5;
+li.active { background: #4f46e5; }
+
+.song.noGo {
+    opacity: .45;
+    background: repeating-linear-gradient(
+        45deg,
+        #2b2b2b,
+        #2b2b2b 10px,
+        #1f1f1f 10px,
+        #1f1f1f 20px
+    );
 }
 
-.song strong {
-    flex: 1 1 100%;
-    margin-bottom: 8px;
+/* Voting Buttons */
+.vote-1 { background: #3a3a3a; }
+.vote-2 { background: #355070; }
+.vote-3 { background: #4f46e5; }
+.vote-4 { background: #2ea44f; }
+.vote-5 { background: #1f883d; }
+
+.activeVote {
+    outline: 2px solid white;
+    box-shadow: 0 0 8px rgba(255,255,255,.4);
 }
 
-/* Buttons in Songs */
-.song button {
-    margin-right: 5px;
-    margin-top: 5px;
-    flex: 1 1 40px;
-    min-width: 40px;
+.deleteProject {
+    margin-left: auto;
+    background: none;
+    font-size: 1.1rem;
 }
 
-/* Ranking */
-ul#rankingList li {
-    display: flex;
-    justify-content: space-between;
-}
-
-.rating {
-    font-weight: bold;
-}
-
-/* ===========================
-   Mobile Responsiveness
-   =========================== */
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
-
-    button {
-        padding: 8px 12px;
-        font-size: 0.9rem;
-    }
-
-    .card {
-        padding: 15px;
-    }
-
-    .song strong {
-        font-size: 0.95rem;
-    }
+.deleteProject:hover {
+    color: #e53935;
 }
