@@ -10,8 +10,7 @@
 
 <h1>🎶 Song Voting</h1>
 
-<!-- PROJEKT-ANSICHT -->
-<div id="projectView">
+<div id="projectView" class="view active">
 
     <div class="card">
         <h2>Projekt erstellen</h2>
@@ -20,16 +19,18 @@
     </div>
 
     <div class="card">
-        <h2>Projekte (Doppelklick)</h2>
+        <h2>Projekte</h2>
         <ul id="projectList"></ul>
     </div>
 
 </div>
 
-<!-- SONG-ANSICHT -->
-<div id="songView" class="hidden">
+<div id="songView" class="view">
 
-    <button id="backBtn" class="backBtn">← Projekte</button>
+    <button id="backBtn" class="backBtn">
+        <span class="arrow">←</span>
+        <span>Projekte</span>
+    </button>
 
     <div class="card">
         <h2>Lied hinzufügen</h2>
@@ -48,6 +49,10 @@
     </div>
 
 </div>
+
+<footer>
+    <span>Second Wave – Menger</span>
+</footer>
 
 <script type="module" src="script.js"></script>
 </body>

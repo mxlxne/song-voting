@@ -16,7 +16,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* User ID */
+/* User */
 const userId =
     localStorage.getItem("userId") ||
     (() => {
@@ -28,7 +28,6 @@ const userId =
 /* DOM */
 const projectView = document.getElementById("projectView");
 const songView = document.getElementById("songView");
-const backBtn = document.getElementById("backBtn");
 
 const projectInput = document.getElementById("projectInput");
 const createProjectBtn = document.getElementById("createProjectBtn");
@@ -38,31 +37,43 @@ const songInput = document.getElementById("songInput");
 const addSongBtn = document.getElementById("addSongBtn");
 const votingList = document.getElementById("votingList");
 const rankingList = document.getElementById("rankingList");
+const backBtn = document.getElementById("backBtn");
 
 let currentProject = null;
-let unsubscribeSongs = null;
+let unsubscribe = null;
+let selectedProject = null;
 
-/* Projekte */
+/* Projekt erstellen */
 createProjectBtn.onclick = async () => {
     if (!projectInput.value) return;
     await addDoc(collection(db, "projects"), { name: projectInput.value });
     projectInput.value = "";
 };
 
+/* Projekte */
 onSnapshot(collection(db, "projects"), snap => {
     projectList.innerHTML = "";
     snap.forEach(p => {
         const li = document.createElement("li");
+        li.className = "project";
         li.textContent = p.data().name;
 
-        li.ondblclick = () => openProject(p.id);
+        li.onclick = () => {
+            if (selectedProject === p.id) {
+                openProject(p.id);
+            } else {
+                selectedProject = p.id;
+                document.querySelectorAll(".project").forEach(el => el.classList.remove("selected"));
+                li.classList.add("selected");
+            }
+        };
 
         const del = document.createElement("button");
         del.textContent = "🗑️";
         del.className = "deleteProject";
         del.onclick = async e => {
             e.stopPropagation();
-            if (confirm("Projekt wirklich löschen?")) {
+            if (confirm("Projekt löschen?")) {
                 await deleteDoc(doc(db, "projects", p.id));
             }
         };
@@ -72,81 +83,70 @@ onSnapshot(collection(db, "projects"), snap => {
     });
 });
 
-/* Projekt öffnen */
+/* Öffnen */
 function openProject(id) {
     currentProject = id;
-    projectView.classList.add("hidden");
-    songView.classList.remove("hidden");
+    projectView.classList.remove("active");
+    songView.classList.add("active");
     listenSongs();
 }
 
 /* Zurück */
 backBtn.onclick = () => {
-    if (unsubscribeSongs) unsubscribeSongs();
-    songView.classList.add("hidden");
-    projectView.classList.remove("hidden");
+    if (unsubscribe) unsubscribe();
+    songView.classList.remove("active");
+    projectView.classList.add("active");
+    selectedProject = null;
 };
 
 /* Songs */
 addSongBtn.onclick = async () => {
-    if (!songInput.value || !currentProject) return;
-
+    if (!songInput.value) return;
     await addDoc(
         collection(db, "projects", currentProject, "songs"),
         { name: songInput.value, votes: [], noGo: false }
     );
-
     songInput.value = "";
 };
 
 function listenSongs() {
-    unsubscribeSongs = onSnapshot(
+    unsubscribe = onSnapshot(
         collection(db, "projects", currentProject, "songs"),
         snap => {
             votingList.innerHTML = "";
             rankingList.innerHTML = "";
-
             const songs = [];
             snap.forEach(s => songs.push({ id: s.id, ...s.data() }));
-
             songs.forEach(renderSong);
             renderRanking(songs);
         }
     );
 }
 
-/* Song rendern */
 function renderSong(song) {
     const li = document.createElement("li");
     li.className = "song" + (song.noGo ? " noGo" : "");
     li.innerHTML = `<strong>${song.name}</strong>`;
 
-    const existingVote = song.votes.find(v => v.userId === userId);
+    const existing = song.votes.find(v => v.userId === userId);
 
     for (let i = 1; i <= 5; i++) {
         const b = document.createElement("button");
         b.textContent = i;
         b.className = `vote-${i}`;
-
-        if (existingVote?.value === i) b.classList.add("activeVote");
+        if (existing?.value === i) b.classList.add("activeVote");
 
         b.onclick = async () => {
             let votes = [...song.votes];
             const found = votes.find(v => v.userId === userId);
-
             if (found) {
-                alert("⚠️ Du hast hier schon abgestimmt – deine Stimme wird geändert.");
+                alert("Deine Stimme wird geändert.");
                 found.value = i;
             } else {
                 votes.push({ userId, value: i });
             }
-
-            await updateDoc(
-                doc(db, "projects", currentProject, "songs", song.id),
-                { votes }
-            );
+            await updateDoc(doc(db, "projects", currentProject, "songs", song.id), { votes });
         };
-
         li.appendChild(b);
     }
 
@@ -154,29 +154,21 @@ function renderSong(song) {
     no.textContent = "🚫";
     no.className = "no";
     no.onclick = async () => {
-        await updateDoc(
-            doc(db, "projects", currentProject, "songs", song.id),
-            { noGo: !song.noGo }
-        );
+        await updateDoc(doc(db, "projects", currentProject, "songs", song.id), { noGo: !song.noGo });
     };
 
     const del = document.createElement("button");
     del.textContent = "🗑️";
     del.className = "delete";
     del.onclick = async () => {
-        await deleteDoc(
-            doc(db, "projects", currentProject, "songs", song.id)
-        );
+        await deleteDoc(doc(db, "projects", currentProject, "songs", song.id));
     };
 
     li.append(no, del);
     votingList.appendChild(li);
 }
 
-/* Ranking */
 function renderRanking(songs) {
-    rankingList.innerHTML = "";
-
     songs
         .map(s => ({
             ...s,
@@ -188,11 +180,7 @@ function renderRanking(songs) {
         .forEach(s => {
             const li = document.createElement("li");
             if (s.noGo) li.classList.add("rankNoGo");
-
-            li.innerHTML = `
-                <span>${s.name}</span>
-                <span>${s.avg === null ? "–" : s.avg.toFixed(2)}</span>
-            `;
+            li.innerHTML = `<span>${s.name}</span><span>${s.avg === null ? "–" : s.avg.toFixed(2)}</span>`;
             rankingList.appendChild(li);
         });
 }

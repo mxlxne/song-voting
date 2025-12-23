@@ -1,119 +1,154 @@
+:root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #e5e7eb;
+    --accent: #6366f1;
+    --accent-soft: rgba(99,102,241,0.15);
+    --danger: #ef4444;
+}
+
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
     font-family: system-ui, sans-serif;
 }
 
 body {
-    background: #121212;
-    color: #f0f0f0;
+    margin: 0;
     padding: 20px;
+    background: var(--bg);
+    color: var(--text);
 }
 
-h1, h2 {
-    margin-bottom: 12px;
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.view {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: 0.3s ease;
+}
+
+.view.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
 .card {
-    background: #1f1f1f;
+    background: var(--card);
+    border-radius: 16px;
     padding: 20px;
-    border-radius: 14px;
     margin-bottom: 20px;
-    box-shadow: 0 6px 18px rgba(0,0,0,.35);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
 input {
     width: 100%;
     padding: 12px;
+    border-radius: 12px;
+    border: none;
     margin-bottom: 10px;
-    background: #2b2b2b;
-    border: 1px solid #444;
-    border-radius: 10px;
-    color: #fff;
+    background: #020617;
+    color: var(--text);
 }
 
 button {
-    padding: 10px 14px;
-    border-radius: 10px;
     border: none;
+    border-radius: 12px;
+    padding: 10px 14px;
     cursor: pointer;
-    color: white;
     font-weight: 600;
+    transition: 0.2s ease;
 }
 
-button.primary { background: #4f46e5; }
-button.no { background: #e53935; }
-button.delete { background: #777; }
+button.primary {
+    background: var(--accent);
+    color: white;
+}
 
-ul { list-style: none; }
+button.primary:hover {
+    box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
 
 li {
-    background: #2b2b2b;
+    background: #020617;
+    margin-bottom: 10px;
     padding: 12px;
     border-radius: 12px;
-    margin-bottom: 10px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
-li.active { background: #4f46e5; }
-
-/* Songs */
-.song.noGo {
-    opacity: .45;
-    background: repeating-linear-gradient(
-        45deg,
-        #2b2b2b,
-        #2b2b2b 10px,
-        #1f1f1f 10px,
-        #1f1f1f 20px
-    );
+/* Projekte */
+li.project {
+    cursor: pointer;
 }
 
-/* Voting Buttons */
-.vote-1 { background: #3a3a3a; }
-.vote-2 { background: #355070; }
-.vote-3 { background: #4f46e5; }
-.vote-4 { background: #2ea44f; }
-.vote-5 { background: #1f883d; }
+li.project.selected {
+    outline: 2px solid var(--accent);
+    background: rgba(99,102,241,0.15);
+}
+
+/* Voting */
+.vote-1 { background:#374151; color:white; }
+.vote-2 { background:#2563eb; color:white; }
+.vote-3 { background:#3b82f6; color:white; }
+.vote-4 { background:#22c55e; color:white; }
+.vote-5 { background:#16a34a; color:white; }
 
 .activeVote {
-    outline: 2px solid white;
-    box-shadow: 0 0 8px rgba(255,255,255,.4);
+    box-shadow: 0 0 0 3px white;
 }
 
-/* Delete Buttons */
-.deleteProject {
-    margin-left: auto;
-    background: none;
-    font-size: 1.1rem;
-}
-.deleteProject:hover {
-    color: #e53935;
-}
-.hidden {
-    display: none;
+.no {
+    background: #64748b;
+    color: white;
 }
 
+.delete, .deleteProject {
+    background: var(--danger);
+    color: white;
+}
+
+.song.noGo {
+    opacity: 0.5;
+}
+
+.rankNoGo {
+    text-decoration: line-through;
+    opacity: 0.5;
+}
+
+/* Zurück Button */
 .backBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, var(--accent), #818cf8);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 999px;
     margin-bottom: 15px;
-    background: none;
-    border: none;
-    color: #4f46e5;
-    font-size: 1rem;
-    cursor: pointer;
-    font-weight: 600;
 }
 
 .backBtn:hover {
-    text-decoration: underline;
+    transform: translateX(-3px);
+    box-shadow: 0 10px 25px rgba(99,102,241,0.4);
 }
 
-/* Ranking No-Go */
-.rankNoGo {
-    opacity: 0.5;
-    text-decoration: line-through;
+footer {
+    text-align: center;
+    opacity: 0.4;
+    margin-top: 40px;
+    font-size: 0.85rem;
 }
