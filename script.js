@@ -119,7 +119,6 @@ function renderSong(song) {
     const voteRow = document.createElement("div");
     voteRow.className = "voteRow";
 
-    // Voting Buttons 1-5
     const existing = song.votes.find(v => v.userId === userId);
     for (let i = 1; i <= 5; i++) {
         const b = document.createElement("button");
@@ -136,7 +135,6 @@ function renderSong(song) {
         voteRow.appendChild(b);
     }
 
-    // NoGo Button
     const no = document.createElement("button");
     no.textContent = "🚫";
     no.className = "no";
@@ -144,7 +142,6 @@ function renderSong(song) {
         await updateDoc(doc(db, "projects", currentProject, "songs", song.id), { noGo: !song.noGo });
     };
 
-    // Löschen Button
     const del = document.createElement("button");
     del.textContent = "🗑️";
     del.className = "delete";

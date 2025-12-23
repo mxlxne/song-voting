@@ -22,12 +22,6 @@ body {
     min-height: 100vh;
 }
 
-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
 h1 {
     text-align: center;
     margin-bottom: 16px;
@@ -35,17 +29,30 @@ h1 {
 
 /* Views */
 .view {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* füllt den Container */
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.25s ease;
-    flex: 1; /* gleiche Höhe wie Parent */
-    display: flex;
-    flex-direction: column;
 }
 
 .view.active {
     opacity: 1;
     pointer-events: auto;
+}
+
+#projectView, #songView {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+#projectList, #votingList, #rankingList {
+    flex: 1;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto; /* scrollen wenn zu viele Items */
 }
 
 /* Card Container */
@@ -144,15 +151,15 @@ ul {
     padding: 12px;
     border-radius: 14px;
     margin-bottom: 10px;
-    transition: background 0.3s ease, opacity 0.3s ease, transform 0.2s ease;
+    transition: background 0.3s ease, opacity 0.3s ease, transform 0.2s ease, color 0.3s ease;
 }
 
 .song.noGo {
-    opacity: 0.7;
+    opacity: 0.6;
     background: #1a1f2f;
     text-decoration: line-through;
     color: #aaa;
-    transform: scale(0.98);
+    transform: scale(0.97);
 }
 
 .song:not(.noGo) {
