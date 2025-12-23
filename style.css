@@ -24,17 +24,15 @@ h1 {
     margin-bottom: 16px;
 }
 
-/* Views */
+/* Views nur Fade-in/out */
 .view {
     opacity: 0;
-    transform: translateY(10px);
     pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.25s ease;
 }
 
 .view.active {
     opacity: 1;
-    transform: translateY(0);
     pointer-events: auto;
 }
 
@@ -71,9 +69,9 @@ button {
     cursor: pointer;
     font-weight: 600;
     transition: 0.2s ease;
-    flex-shrink: 0;
     min-width: 45px;
     font-size: 1rem;
+    flex-shrink: 0;
 }
 
 button.primary {
@@ -147,7 +145,6 @@ ul {
     margin-top: 6px;
 }
 
-/* Voting Buttons Farbcode */
 .vote-1 { background:#374151; color:white; }
 .vote-2 { background:#2563eb; color:white; }
 .vote-3 { background:#3b82f6; color:white; }
@@ -168,7 +165,6 @@ ul {
     color: white;
 }
 
-/* noGo Songs */
 .song.noGo {
     opacity: 0.5;
 }
@@ -195,21 +191,21 @@ ul {
     box-shadow: 0 8px 20px rgba(99,102,241,0.4);
 }
 
-/* Ranking */
+/* Ranking list */
 #rankingList li {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-direction: column;
+    gap: 8px;
     background: #1e293b;
     padding: 8px 12px;
     border-radius: 12px;
     margin-bottom: 6px;
 }
 
+/* Ranking Buttons */
 #rankingList li .voteRow {
     margin-top: 0;
+    flex-wrap: nowrap;
 }
 
 /* Footer */
@@ -220,7 +216,7 @@ footer {
     font-size: 0.8rem;
 }
 
-/* Responsive Desktop & Mobile */
+/* Responsive */
 @media (max-width: 900px) {
     .voteRow {
         justify-content: space-between;
@@ -233,9 +229,5 @@ footer {
         margin-top: 6px;
         font-size: 0.95rem;
         padding: 10px 12px;
-    }
-    #rankingList li {
-        flex-direction: column;
-        align-items: flex-start;
     }
 }

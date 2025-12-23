@@ -14,13 +14,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const userId =
-    localStorage.getItem("userId") ||
-    (() => {
-        const id = crypto.randomUUID();
-        localStorage.setItem("userId", id);
-        return id;
-    })();
+const userId = localStorage.getItem("userId") || (() => {
+    const id = crypto.randomUUID();
+    localStorage.setItem("userId", id);
+    return id;
+})();
 
 const projectView = document.getElementById("projectView");
 const songView = document.getElementById("songView");
@@ -37,7 +35,6 @@ const backBtn = document.getElementById("backBtn");
 
 let currentProject = null;
 let unsubscribe = null;
-let selectedProject = null;
 
 createProjectBtn.onclick = async () => {
     if (!projectInput.value) return;
@@ -61,14 +58,10 @@ onSnapshot(collection(db, "projects"), snap => {
         del.textContent = "🗑️";
         del.onclick = async e => {
             e.stopPropagation();
-            if (confirm("Projekt löschen?")) {
-                await deleteDoc(doc(db, "projects", p.id));
-            }
+            if (confirm("Projekt löschen?")) await deleteDoc(doc(db, "projects", p.id));
         };
 
-        project.onclick = () => {
-            openProject(p.id);
-        };
+        project.onclick = () => openProject(p.id);
 
         project.append(name, del);
         li.appendChild(project);
@@ -91,25 +84,19 @@ backBtn.onclick = () => {
 
 addSongBtn.onclick = async () => {
     if (!songInput.value) return;
-    await addDoc(
-        collection(db, "projects", currentProject, "songs"),
-        { name: songInput.value, votes: [], noGo: false }
-    );
+    await addDoc(collection(db, "projects", currentProject, "songs"), { name: songInput.value, votes: [], noGo: false });
     songInput.value = "";
 };
 
 function listenSongs() {
-    unsubscribe = onSnapshot(
-        collection(db, "projects", currentProject, "songs"),
-        snap => {
-            votingList.innerHTML = "";
-            rankingList.innerHTML = "";
-            const songs = [];
-            snap.forEach(s => songs.push({ id: s.id, ...s.data() }));
-            songs.forEach(renderSong);
-            renderRanking(songs);
-        }
-    );
+    unsubscribe = onSnapshot(collection(db, "projects", currentProject, "songs"), snap => {
+        votingList.innerHTML = "";
+        rankingList.innerHTML = "";
+        const songs = [];
+        snap.forEach(s => songs.push({ id: s.id, ...s.data() }));
+        songs.forEach(renderSong);
+        renderRanking(songs);
+    });
 }
 
 function renderSong(song) {
@@ -119,7 +106,6 @@ function renderSong(song) {
 
     const voteRow = document.createElement("div");
     voteRow.className = "voteRow";
-
     const existing = song.votes.find(v => v.userId === userId);
 
     for (let i = 1; i <= 5; i++) {
@@ -127,17 +113,12 @@ function renderSong(song) {
         b.textContent = i;
         b.className = `vote-${i}`;
         if (existing?.value === i) b.classList.add("activeVote");
-
         b.onclick = async () => {
-            let votes = [...song.votes];
+            const votes = [...song.votes];
             const found = votes.find(v => v.userId === userId);
             if (found) found.value = i;
             else votes.push({ userId, value: i });
-
-            await updateDoc(
-                doc(db, "projects", currentProject, "songs", song.id),
-                { votes }
-            );
+            await updateDoc(doc(db, "projects", currentProject, "songs", song.id), { votes });
         };
         voteRow.appendChild(b);
     }
@@ -145,61 +126,24 @@ function renderSong(song) {
     const no = document.createElement("button");
     no.textContent = "🚫";
     no.className = "no";
-    no.onclick = async () => {
-        await updateDoc(
-            doc(db, "projects", currentProject, "songs", song.id),
-            { noGo: !song.noGo }
-        );
-    };
+    no.onclick = async () => await updateDoc(doc(db, "projects", currentProject, "songs", song.id), { noGo: !song.noGo });
 
     const del = document.createElement("button");
     del.textContent = "🗑️";
     del.className = "delete";
-    del.onclick = async () => {
-        await deleteDoc(
-            doc(db, "projects", currentProject, "songs", song.id)
-        );
-    };
+    del.onclick = async () => await deleteDoc(doc(db, "projects", currentProject, "songs", song.id));
 
     li.append(voteRow, no, del);
     votingList.appendChild(li);
 }
 
 function renderRanking(songs) {
-    songs
-        .map(s => ({
-            ...s,
-            avg: (!s.noGo && s.votes.length)
-                ? s.votes.reduce((a,v) => a + v.value, 0) / s.votes.length
-                : null
-        }))
-        .sort((a,b) => (b.avg ?? -1) - (a.avg ?? -1))
-        .forEach(s => {
-            const li = document.createElement("li");
-            if (s.noGo) li.classList.add("rankNoGo");
-            li.innerHTML = `<span>${s.name}</span>`;
-
-            const voteRow = document.createElement("div");
-            voteRow.className = "voteRow";
-
-            for (let i = 1; i <= 5; i++) {
-                const b = document.createElement("button");
-                b.textContent = i;
-                b.className = `vote-${i}`;
-                voteRow.appendChild(b);
-            }
-
-            const no = document.createElement("button");
-            no.textContent = "🚫";
-            no.className = "no";
-            voteRow.appendChild(no);
-
-            const del = document.createElement("button");
-            del.textContent = "🗑️";
-            del.className = "delete";
-            voteRow.appendChild(del);
-
-            li.appendChild(voteRow);
-            rankingList.appendChild(li);
-        });
+    songs.map(s => ({ ...s, avg: (!s.noGo && s.votes.length) ? s.votes.reduce((a,v) => a + v.value,0)/s.votes.length : null }))
+         .sort((a,b) => (b.avg ?? -1) - (a.avg ?? -1))
+         .forEach(s => {
+             const li = document.createElement("li");
+             if (s.noGo) li.classList.add("rankNoGo");
+             li.innerHTML = `<span>${s.name} – ${s.avg === null ? "–" : s.avg.toFixed(2)}</span>`;
+             rankingList.appendChild(li);
+         });
 }
