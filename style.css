@@ -22,6 +22,12 @@ body {
     min-height: 100vh;
 }
 
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 h1 {
     text-align: center;
     margin-bottom: 16px;
@@ -32,7 +38,9 @@ h1 {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.25s ease;
-    min-height: 400px; /* Höhe fixieren, um Lücke zu verhindern */
+    flex: 1; /* gleiche Höhe wie Parent */
+    display: flex;
+    flex-direction: column;
 }
 
 .view.active {
@@ -136,6 +144,19 @@ ul {
     padding: 12px;
     border-radius: 14px;
     margin-bottom: 10px;
+    transition: background 0.3s ease, opacity 0.3s ease, transform 0.2s ease;
+}
+
+.song.noGo {
+    opacity: 0.7;
+    background: #1a1f2f;
+    text-decoration: line-through;
+    color: #aaa;
+    transform: scale(0.98);
+}
+
+.song:not(.noGo) {
+    transform: scale(1);
 }
 
 /* Voting + Actions */
@@ -173,19 +194,23 @@ ul {
     color: white;
 }
 
-.song.noGo {
-    opacity: 0.7; /* leichtes Ausgrauen */
-    background: #1a1f2f; /* dunkler Hintergrund für NoGo */
-    transition: background 0.3s ease, opacity 0.3s ease;
+/* Ranking */
+#rankingList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: #1e293b;
+    margin-bottom: 6px;
 }
 
 .rankNoGo {
     text-decoration: line-through;
-    color: #888888; /* dezentes Grau */
+    color: #888888;
     opacity: 0.7;
     transition: color 0.3s ease, opacity 0.3s ease;
 }
-
 
 /* Back button */
 .backBtn {
@@ -202,17 +227,6 @@ ul {
 .backBtn:hover {
     transform: translateX(-3px);
     box-shadow: 0 8px 20px rgba(99,102,241,0.4);
-}
-
-/* Ranking */
-#rankingList li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    border-radius: 12px;
-    background: #1e293b;
-    margin-bottom: 6px;
 }
 
 /* Footer */
