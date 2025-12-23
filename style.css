@@ -27,12 +27,14 @@ h1 {
 /* Views */
 .view {
     opacity: 0;
+    transform: translateY(10px);
     pointer-events: none;
-    transition: opacity 0.25s ease;
+    transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .view.active {
     opacity: 1;
+    transform: translateY(0);
     pointer-events: auto;
 }
 
@@ -65,11 +67,13 @@ input {
 button {
     border: none;
     border-radius: 12px;
-    padding: 12px 14px;
+    padding: 12px 16px;
     cursor: pointer;
     font-weight: 600;
     transition: 0.2s ease;
     flex-shrink: 0;
+    min-width: 45px;
+    font-size: 1rem;
 }
 
 button.primary {
@@ -129,7 +133,6 @@ ul {
 .song {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     background: #020617;
     padding: 12px;
     border-radius: 14px;
@@ -142,11 +145,6 @@ ul {
     gap: 6px;
     flex-wrap: wrap;
     margin-top: 6px;
-}
-
-.voteRow button {
-    min-width: 40px;
-    text-align: center;
 }
 
 /* Voting Buttons Farbcode */
@@ -201,10 +199,17 @@ ul {
 #rankingList li {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
     background: #1e293b;
     padding: 8px 12px;
     border-radius: 12px;
     margin-bottom: 6px;
+}
+
+#rankingList li .voteRow {
+    margin-top: 0;
 }
 
 /* Footer */
@@ -215,17 +220,19 @@ footer {
     font-size: 0.8rem;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
+/* Responsive Desktop & Mobile */
+@media (max-width: 900px) {
     .voteRow {
         justify-content: space-between;
     }
-    .deleteProject {
-        padding: 8px 10px;
-    }
+}
+
+@media (max-width: 600px) {
     button.primary {
         width: 100%;
         margin-top: 6px;
+        font-size: 0.95rem;
+        padding: 10px 12px;
     }
     #rankingList li {
         flex-direction: column;

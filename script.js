@@ -1,9 +1,7 @@
-// Imports müssen ganz oben stehen
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, increment } 
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } 
     from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyAN8XBT9NazVeIgC_0-e2MIFtV9vMFljsQ",
   authDomain: "song-voting-f0763.firebaseapp.com",
@@ -16,7 +14,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* User */
 const userId =
     localStorage.getItem("userId") ||
     (() => {
@@ -25,7 +22,6 @@ const userId =
         return id;
     })();
 
-/* DOM */
 const projectView = document.getElementById("projectView");
 const songView = document.getElementById("songView");
 
@@ -43,20 +39,16 @@ let currentProject = null;
 let unsubscribe = null;
 let selectedProject = null;
 
-/* Projekt erstellen */
 createProjectBtn.onclick = async () => {
     if (!projectInput.value) return;
     await addDoc(collection(db, "projects"), { name: projectInput.value });
     projectInput.value = "";
 };
 
-/* Projekte anzeigen */
 onSnapshot(collection(db, "projects"), snap => {
     projectList.innerHTML = "";
-
     snap.forEach(p => {
         const li = document.createElement("li");
-
         const project = document.createElement("div");
         project.className = "project";
 
@@ -75,15 +67,7 @@ onSnapshot(collection(db, "projects"), snap => {
         };
 
         project.onclick = () => {
-            if (selectedProject === p.id) {
-                openProject(p.id);
-            } else {
-                selectedProject = p.id;
-                document.querySelectorAll(".project").forEach(el =>
-                    el.classList.remove("selected")
-                );
-                project.classList.add("selected");
-            }
+            openProject(p.id);
         };
 
         project.append(name, del);
@@ -92,7 +76,6 @@ onSnapshot(collection(db, "projects"), snap => {
     });
 });
 
-/* Navigation */
 function openProject(id) {
     currentProject = id;
     projectView.classList.remove("active");
@@ -104,10 +87,8 @@ backBtn.onclick = () => {
     if (unsubscribe) unsubscribe();
     songView.classList.remove("active");
     projectView.classList.add("active");
-    selectedProject = null;
 };
 
-/* Songs */
 addSongBtn.onclick = async () => {
     if (!songInput.value) return;
     await addDoc(
@@ -196,10 +177,29 @@ function renderRanking(songs) {
         .forEach(s => {
             const li = document.createElement("li");
             if (s.noGo) li.classList.add("rankNoGo");
-            li.innerHTML = `
-                <span>${s.name}</span>
-                <span>${s.avg === null ? "–" : s.avg.toFixed(2)}</span>
-            `;
+            li.innerHTML = `<span>${s.name}</span>`;
+
+            const voteRow = document.createElement("div");
+            voteRow.className = "voteRow";
+
+            for (let i = 1; i <= 5; i++) {
+                const b = document.createElement("button");
+                b.textContent = i;
+                b.className = `vote-${i}`;
+                voteRow.appendChild(b);
+            }
+
+            const no = document.createElement("button");
+            no.textContent = "🚫";
+            no.className = "no";
+            voteRow.appendChild(no);
+
+            const del = document.createElement("button");
+            del.textContent = "🗑️";
+            del.className = "delete";
+            voteRow.appendChild(del);
+
+            li.appendChild(voteRow);
             rankingList.appendChild(li);
         });
 }
