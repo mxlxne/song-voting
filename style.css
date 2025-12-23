@@ -1,25 +1,16 @@
-:root {
-    --bg: #0f172a;
-    --card: #1e293b;
-    --text: #e5e7eb;
-    --accent: #6366f1;
-    --accent-soft: rgba(99,102,241,0.18);
-    --danger: #ef4444;
-}
-
-* {
-    box-sizing: border-box;
-    font-family: system-ui, sans-serif;
+html {
+    overflow-y: scroll; /* reserviert Platz für Scrollbar, verhindert Layout‑Jump */ 
 }
 
 body {
     margin: 0;
     padding: 16px;
-    background: var(--bg);
-    color: var(--text);
+    font-family: system-ui, sans-serif;
+    background: #0f172a;
+    color: #e5e7eb;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh; 
 }
 
 h1 {
@@ -27,18 +18,15 @@ h1 {
     margin-bottom: 16px;
 }
 
-/* Wrapper für Views */
-.view-container {
+.container {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    flex: 1;
-    min-height: 0; /* wichtig für Scrollen */
+    min-height: 0; /* wichtig für flex scrolling */
 }
 
-/* Views */
+/* Views überlagern sich, nur opacity ändert */
 .view {
-    display: flex;
-    flex-direction: column;
     flex: 1;
     opacity: 0;
     pointer-events: none;
@@ -50,210 +38,78 @@ h1 {
     pointer-events: auto;
 }
 
-#projectList, #votingList, #rankingList {
-    flex: 1;
+/* Listen scrollen immer */
+ul {
+    list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
+    flex: 1;
     overflow-y: auto;
 }
 
-/* Card Container */
+/* Cards */
 .card {
-    background: var(--card);
-    border-radius: 16px;
-    padding: 18px;
-    margin-bottom: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-}
-
-.card.compact {
-    margin-top: 8px;
-}
-
-/* Inputs */
-input {
-    width: 100%;
-    padding: 14px;
+    background: #1e293b;
     border-radius: 12px;
-    border: none;
-    margin-bottom: 10px;
-    background: #020617;
-    color: var(--text);
+    padding: 16px;
+    margin-bottom: 16px;
 }
 
 /* Buttons */
 button {
-    border: none;
-    border-radius: 12px;
-    padding: 12px 16px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.2s ease;
-    flex-shrink: 0;
-    min-width: 45px;
-    min-height: 45px;
+    padding: 10px 14px;
     font-size: 1rem;
-}
-
-button.primary {
-    background: var(--accent);
-    color: white;
-}
-
-button.primary:hover {
-    box-shadow: 0 0 0 4px var(--accent-soft);
-}
-
-/* Projekt-Liste */
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.project {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 14px;
-    border-radius: 12px;
-    cursor: pointer;
-    background: #020617;
-    transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.project:hover {
-    background: rgba(99,102,241,0.15);
-    transform: scale(1.01);
-}
-
-.project.selected {
-    outline: 2px solid var(--accent);
-    background: rgba(99,102,241,0.2);
-}
-
-.projectName {
-    flex: 1;
-    word-break: break-word;
-}
-
-.deleteProject {
-    background: var(--danger);
-    color: white;
-    padding: 10px 12px;
+    border: none;
     border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+.primary {
+    background: #6366f1;
+    color: white;
+}
+
+.backBtn {
+    background: #818cf8;
+    color: white;
+    margin-bottom: 12px;
 }
 
 /* Songs */
-@keyframes songIn {
-    0% { opacity: 0; transform: translateY(-10px) scale(0.95); }
-    100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
 .song {
-    display: flex;
-    flex-direction: column;
-    background: #020617;
-    padding: 12px;
-    border-radius: 14px;
+    padding: 10px;
     margin-bottom: 10px;
-    transition: background 0.3s ease, opacity 0.3s ease, transform 0.3s ease, color 0.3s ease;
-    animation: songIn 0.3s ease forwards;
+    background: #020617;
+    border-radius: 10px;
+    transition: opacity 0.25s ease, transform 0.2s ease;
 }
 
 .song.noGo {
     opacity: 0.6;
-    background: #1a1f2f;
-    text-decoration: line-through;
-    color: #aaa;
-    transform: scale(0.97);
 }
 
-/* Voting + Actions */
+/* Voting row */
 .voteRow {
     display: flex;
     gap: 6px;
-    flex-wrap: nowrap;
     margin-top: 8px;
 }
 
 .voteRow button {
-    flex: 1 1 40px;
-    min-width: 40px;
-    min-height: 40px;
-}
-
-/* Voting Button Farben */
-.vote-1 { background:#374151; color:white; }
-.vote-2 { background:#2563eb; color:white; }
-.vote-3 { background:#3b82f6; color:white; }
-.vote-4 { background:#22c55e; color:white; }
-.vote-5 { background:#16a34a; color:white; }
-
-.activeVote {
-    box-shadow: 0 0 0 3px white;
-}
-
-.no {
-    background: #64748b;
-    color: white;
-}
-
-.delete {
-    background: var(--danger);
-    color: white;
+    flex: 1;
 }
 
 /* Ranking */
 #rankingList li {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    border-radius: 12px;
-    background: #1e293b;
     margin-bottom: 6px;
-}
-
-.rankNoGo {
-    text-decoration: line-through;
-    color: #888888;
-    opacity: 0.7;
-    transition: color 0.3s ease, opacity 0.3s ease;
-}
-
-/* Back button */
-.backBtn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: linear-gradient(135deg, var(--accent), #818cf8);
-    color: white;
-    padding: 10px 18px;
-    border-radius: 999px;
-    margin-bottom: 12px;
-}
-
-.backBtn:hover {
-    transform: translateX(-3px);
-    box-shadow: 0 8px 20px rgba(99,102,241,0.4);
-}
-
-/* Footer */
-footer {
-    text-align: center;
-    opacity: 0.35;
-    margin-top: 20px;
-    font-size: 0.8rem;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-    .voteRow button {
-        font-size: 0.95rem;
-        padding: 10px;
-    }
+    background: #1e293b;
+    padding: 8px;
+    border-radius: 8px;
 }
