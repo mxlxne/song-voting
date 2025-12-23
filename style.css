@@ -47,6 +47,7 @@ h1 {
     box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
+/* Compact input card */
 .card.compact {
     margin-top: 8px;
 }
@@ -70,6 +71,7 @@ button {
     cursor: pointer;
     font-weight: 600;
     transition: 0.2s ease;
+    flex-shrink: 0;
 }
 
 button.primary {
@@ -95,7 +97,9 @@ li {
     border-radius: 14px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 /* Projekte */
@@ -104,7 +108,6 @@ li {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-
     flex: 1;
     padding: 14px;
     border-radius: 12px;
@@ -121,16 +124,15 @@ li {
     word-break: break-word;
 }
 
+/* Projekt löschen */
 .deleteProject {
     background: var(--danger);
     color: white;
     padding: 10px 12px;
     border-radius: 10px;
-    flex-shrink: 0;
 }
 
-
-/* Voting */
+/* Songs */
 .song {
     flex-direction: column;
     align-items: flex-start;
@@ -138,9 +140,10 @@ li {
 
 .voteRow {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
     gap: 6px;
     width: 100%;
+    margin-top: 6px;
 }
 
 .vote-1 { background:#374151; color:white; }
@@ -163,11 +166,11 @@ li {
     color: white;
 }
 
+/* noGo */
 .song.noGo {
     opacity: 0.5;
 }
 
-/* Ranking */
 .rankNoGo {
     text-decoration: line-through;
     opacity: 0.5;
