@@ -17,12 +17,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-
-// ---------------- Dark Mode ----------------
-document.getElementById("darkModeToggle").addEventListener("click", () => {
-    document.body.classList.toggle("dark");
-});
-
 // ---------------- Projekte ----------------
 const projectInput = document.getElementById("projectInput");
 const addProjectBtn = document.getElementById("addProjectBtn");
