@@ -50,27 +50,23 @@ createProjectBtn.onclick = async () => {
     projectInput.value = "";
 };
 
-/* Projekte */
+/* Projekte anzeigen */
 onSnapshot(collection(db, "projects"), snap => {
     projectList.innerHTML = "";
+
     snap.forEach(p => {
         const li = document.createElement("li");
-        li.className = "project";
-        li.textContent = p.data().name;
 
-        li.onclick = () => {
-            if (selectedProject === p.id) {
-                openProject(p.id);
-            } else {
-                selectedProject = p.id;
-                document.querySelectorAll(".project").forEach(el => el.classList.remove("selected"));
-                li.classList.add("selected");
-            }
-        };
+        const project = document.createElement("div");
+        project.className = "project";
+
+        const name = document.createElement("div");
+        name.className = "projectName";
+        name.textContent = p.data().name;
 
         const del = document.createElement("button");
-        del.textContent = "🗑️";
         del.className = "deleteProject";
+        del.textContent = "🗑️";
         del.onclick = async e => {
             e.stopPropagation();
             if (confirm("Projekt löschen?")) {
@@ -78,12 +74,25 @@ onSnapshot(collection(db, "projects"), snap => {
             }
         };
 
-        li.appendChild(del);
+        project.onclick = () => {
+            if (selectedProject === p.id) {
+                openProject(p.id);
+            } else {
+                selectedProject = p.id;
+                document.querySelectorAll(".project").forEach(el =>
+                    el.classList.remove("selected")
+                );
+                project.classList.add("selected");
+            }
+        };
+
+        project.append(name, del);
+        li.appendChild(project);
         projectList.appendChild(li);
     });
 });
 
-/* Öffnen */
+/* Navigation */
 function openProject(id) {
     currentProject = id;
     projectView.classList.remove("active");
@@ -91,7 +100,6 @@ function openProject(id) {
     listenSongs();
 }
 
-/* Zurück */
 backBtn.onclick = () => {
     if (unsubscribe) unsubscribe();
     songView.classList.remove("active");
@@ -128,6 +136,9 @@ function renderSong(song) {
     li.className = "song" + (song.noGo ? " noGo" : "");
     li.innerHTML = `<strong>${song.name}</strong>`;
 
+    const voteRow = document.createElement("div");
+    voteRow.className = "voteRow";
+
     const existing = song.votes.find(v => v.userId === userId);
 
     for (let i = 1; i <= 5; i++) {
@@ -139,32 +150,37 @@ function renderSong(song) {
         b.onclick = async () => {
             let votes = [...song.votes];
             const found = votes.find(v => v.userId === userId);
-            if (found) {
-                alert("Deine Stimme wird geändert.");
-                found.value = i;
-            } else {
-                votes.push({ userId, value: i });
-            }
-            await updateDoc(doc(db, "projects", currentProject, "songs", song.id), { votes });
+            if (found) found.value = i;
+            else votes.push({ userId, value: i });
+
+            await updateDoc(
+                doc(db, "projects", currentProject, "songs", song.id),
+                { votes }
+            );
         };
-        li.appendChild(b);
+        voteRow.appendChild(b);
     }
 
     const no = document.createElement("button");
     no.textContent = "🚫";
     no.className = "no";
     no.onclick = async () => {
-        await updateDoc(doc(db, "projects", currentProject, "songs", song.id), { noGo: !song.noGo });
+        await updateDoc(
+            doc(db, "projects", currentProject, "songs", song.id),
+            { noGo: !song.noGo }
+        );
     };
 
     const del = document.createElement("button");
     del.textContent = "🗑️";
     del.className = "delete";
     del.onclick = async () => {
-        await deleteDoc(doc(db, "projects", currentProject, "songs", song.id));
+        await deleteDoc(
+            doc(db, "projects", currentProject, "songs", song.id)
+        );
     };
 
-    li.append(no, del);
+    li.append(voteRow, no, del);
     votingList.appendChild(li);
 }
 
@@ -180,7 +196,10 @@ function renderRanking(songs) {
         .forEach(s => {
             const li = document.createElement("li");
             if (s.noGo) li.classList.add("rankNoGo");
-            li.innerHTML = `<span>${s.name}</span><span>${s.avg === null ? "–" : s.avg.toFixed(2)}</span>`;
+            li.innerHTML = `
+                <span>${s.name}</span>
+                <span>${s.avg === null ? "–" : s.avg.toFixed(2)}</span>
+            `;
             rankingList.appendChild(li);
         });
 }
