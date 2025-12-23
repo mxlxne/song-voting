@@ -1,7 +1,8 @@
 
 // -------------- Firebase Module ---------------
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, increment } 
+  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 // Firebase config
 const firebaseConfig = {
