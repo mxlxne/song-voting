@@ -94,3 +94,26 @@ li.active { background: #4f46e5; }
 .deleteProject:hover {
     color: #e53935;
 }
+.hidden {
+    display: none;
+}
+
+.backBtn {
+    margin-bottom: 15px;
+    background: none;
+    border: none;
+    color: #4f46e5;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.backBtn:hover {
+    text-decoration: underline;
+}
+
+/* Ranking No-Go */
+.rankNoGo {
+    opacity: 0.5;
+    text-decoration: line-through;
+}

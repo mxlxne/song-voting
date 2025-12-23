@@ -10,31 +10,43 @@
 
 <h1>🎶 Song Voting</h1>
 
-<div class="card">
-    <h2>Projekt erstellen</h2>
-    <input id="projectInput" placeholder="Projektname">
-    <button id="createProjectBtn" class="primary">Projekt erstellen</button>
+<!-- PROJEKT-ANSICHT -->
+<div id="projectView">
+
+    <div class="card">
+        <h2>Projekt erstellen</h2>
+        <input id="projectInput" placeholder="Projektname">
+        <button id="createProjectBtn" class="primary">Projekt erstellen</button>
+    </div>
+
+    <div class="card">
+        <h2>Projekte (Doppelklick)</h2>
+        <ul id="projectList"></ul>
+    </div>
+
 </div>
 
-<div class="card">
-    <h2>Projekte</h2>
-    <ul id="projectList"></ul>
-</div>
+<!-- SONG-ANSICHT -->
+<div id="songView" class="hidden">
 
-<div class="card">
-    <h2>Lied hinzufügen</h2>
-    <input id="songInput" placeholder="Songname">
-    <button id="addSongBtn" class="primary">Lied hinzufügen</button>
-</div>
+    <button id="backBtn" class="backBtn">← Projekte</button>
 
-<div class="card">
-    <h2>Abstimmung</h2>
-    <ul id="votingList"></ul>
-</div>
+    <div class="card">
+        <h2>Lied hinzufügen</h2>
+        <input id="songInput" placeholder="Songname">
+        <button id="addSongBtn" class="primary">Lied hinzufügen</button>
+    </div>
 
-<div class="card">
-    <h2>Ranking</h2>
-    <ul id="rankingList"></ul>
+    <div class="card">
+        <h2>Abstimmung</h2>
+        <ul id="votingList"></ul>
+    </div>
+
+    <div class="card">
+        <h2>Ranking</h2>
+        <ul id="rankingList"></ul>
+    </div>
+
 </div>
 
 <script type="module" src="script.js"></script>

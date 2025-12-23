@@ -16,7 +16,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* 🆔 User ID (für Warnung bei Mehrfachvoten) */
+/* User ID */
 const userId =
     localStorage.getItem("userId") ||
     (() => {
@@ -25,7 +25,11 @@ const userId =
         return id;
     })();
 
-/* 📌 DOM */
+/* DOM */
+const projectView = document.getElementById("projectView");
+const songView = document.getElementById("songView");
+const backBtn = document.getElementById("backBtn");
+
 const projectInput = document.getElementById("projectInput");
 const createProjectBtn = document.getElementById("createProjectBtn");
 const projectList = document.getElementById("projectList");
@@ -38,7 +42,7 @@ const rankingList = document.getElementById("rankingList");
 let currentProject = null;
 let unsubscribeSongs = null;
 
-/* 📁 Projekte */
+/* Projekte */
 createProjectBtn.onclick = async () => {
     if (!projectInput.value) return;
     await addDoc(collection(db, "projects"), { name: projectInput.value });
@@ -50,7 +54,8 @@ onSnapshot(collection(db, "projects"), snap => {
     snap.forEach(p => {
         const li = document.createElement("li");
         li.textContent = p.data().name;
-        li.onclick = () => selectProject(p.id, li);
+
+        li.ondblclick = () => openProject(p.id);
 
         const del = document.createElement("button");
         del.textContent = "🗑️";
@@ -67,17 +72,22 @@ onSnapshot(collection(db, "projects"), snap => {
     });
 });
 
-/* 📂 Projekt auswählen */
-function selectProject(id, li) {
+/* Projekt öffnen */
+function openProject(id) {
     currentProject = id;
-    document.querySelectorAll("#projectList li").forEach(e => e.classList.remove("active"));
-    li.classList.add("active");
-
-    if (unsubscribeSongs) unsubscribeSongs();
+    projectView.classList.add("hidden");
+    songView.classList.remove("hidden");
     listenSongs();
 }
 
-/* 🎵 Songs */
+/* Zurück */
+backBtn.onclick = () => {
+    if (unsubscribeSongs) unsubscribeSongs();
+    songView.classList.add("hidden");
+    projectView.classList.remove("hidden");
+};
+
+/* Songs */
 addSongBtn.onclick = async () => {
     if (!songInput.value || !currentProject) return;
 
@@ -94,18 +104,18 @@ function listenSongs() {
         collection(db, "projects", currentProject, "songs"),
         snap => {
             votingList.innerHTML = "";
-            rankingList.innerHTML = [];
+            rankingList.innerHTML = "";
 
             const songs = [];
             snap.forEach(s => songs.push({ id: s.id, ...s.data() }));
 
-            songs.forEach(song => renderSong(song));
+            songs.forEach(renderSong);
             renderRanking(songs);
         }
     );
 }
 
-/* 🗳️ Song rendern */
+/* Song rendern */
 function renderSong(song) {
     const li = document.createElement("li");
     li.className = "song" + (song.noGo ? " noGo" : "");
@@ -163,21 +173,26 @@ function renderSong(song) {
     votingList.appendChild(li);
 }
 
-/* 🏆 Ranking */
+/* Ranking */
 function renderRanking(songs) {
     rankingList.innerHTML = "";
 
     songs
         .map(s => ({
             ...s,
-            avg: s.votes.length
+            avg: (!s.noGo && s.votes.length)
                 ? s.votes.reduce((a,v) => a + v.value, 0) / s.votes.length
-                : 0
+                : null
         }))
-        .sort((a,b) => b.avg - a.avg)
+        .sort((a,b) => (b.avg ?? -1) - (a.avg ?? -1))
         .forEach(s => {
             const li = document.createElement("li");
-            li.innerHTML = `<span>${s.name}</span><span>${s.avg ? s.avg.toFixed(2) : "—"}</span>`;
+            if (s.noGo) li.classList.add("rankNoGo");
+
+            li.innerHTML = `
+                <span>${s.name}</span>
+                <span>${s.avg === null ? "–" : s.avg.toFixed(2)}</span>
+            `;
             rankingList.appendChild(li);
         });
 }
