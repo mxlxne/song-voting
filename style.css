@@ -19,10 +19,9 @@ body {
     color: var(--text);
 }
 
-/* Header */
 h1 {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 /* Views */
@@ -73,7 +72,6 @@ button {
     flex-shrink: 0;
 }
 
-/* Primäre Buttons */
 button.primary {
     background: var(--accent);
     color: white;
@@ -199,11 +197,21 @@ ul {
     box-shadow: 0 8px 20px rgba(99,102,241,0.4);
 }
 
+/* Ranking */
+#rankingList li {
+    display: flex;
+    justify-content: space-between;
+    background: #1e293b;
+    padding: 8px 12px;
+    border-radius: 12px;
+    margin-bottom: 6px;
+}
+
 /* Footer */
 footer {
     text-align: center;
     opacity: 0.35;
-    margin-top: 30px;
+    margin-top: 20px;
     font-size: 0.8rem;
 }
 
@@ -218,5 +226,9 @@ footer {
     button.primary {
         width: 100%;
         margin-top: 6px;
+    }
+    #rankingList li {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
