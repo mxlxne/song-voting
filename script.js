@@ -1,10 +1,14 @@
 
 // -------------- Firebase Module ---------------
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
 
 // Firebase config
-const firebaseConfig = {
+  const firebaseConfig = {
     apiKey: "AIzaSyAN8XBT9NazVeIgC_0-e2MIFtV9vMFljsQ",
     authDomain: "song-voting-f0763.firebaseapp.com",
     projectId: "song-voting-f0763",
@@ -13,10 +17,7 @@ const firebaseConfig = {
     appId: "1:270124010704:web:c31060bf57563de96e22d5",
     measurementId: "G-FHHKR740EY"
   };
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
+  
 // ---------------- Dark Mode ----------------
 document.getElementById("darkModeToggle").addEventListener("click", () => {
     document.body.classList.toggle("dark");
