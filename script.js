@@ -1,4 +1,9 @@
-// Firebase config 
+
+// -------------- Firebase Module ---------------
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+// Firebase config
 const firebaseConfig = {
     apiKey: "AIzaSyAN8XBT9NazVeIgC_0-e2MIFtV9vMFljsQ",
     authDomain: "song-voting-f0763.firebaseapp.com",
@@ -9,117 +14,144 @@ const firebaseConfig = {
     measurementId: "G-FHHKR740EY"
   };
 
-
-
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // ---------------- Dark Mode ----------------
 document.getElementById("darkModeToggle").addEventListener("click", () => {
     document.body.classList.toggle("dark");
 });
 
-// ---------------- Song hinzufügen ----------------
-document.getElementById("addSongBtn").addEventListener("click", () => {
-    const input = document.getElementById("songInput");
-    const title = input.value.trim();
-    if (!title) return;
+// ---------------- Projekte ----------------
+const projectInput = document.getElementById("projectInput");
+const addProjectBtn = document.getElementById("addProjectBtn");
+const projectList = document.getElementById("projectList");
+let currentProject = null;
 
-    db.collection("songs").add({
-        title: title,
-        total: 0,
-        votes: 0,
-        noGo: 0
-    });
-
-    input.value = "";
+addProjectBtn.addEventListener("click", async () => {
+    const name = projectInput.value.trim();
+    if (!name) return;
+    await addDoc(collection(db,"projects"),{name});
+    projectInput.value="";
 });
 
-// ---------------- Voting & Ranking ----------------
-db.collection("songs").onSnapshot(snapshot => {
-    const votingList = document.getElementById("votingList");
-    const rankingList = document.getElementById("rankingList");
-
-    votingList.innerHTML = "";
-    rankingList.innerHTML = "";
-
-    let songs = [];
-
-    snapshot.forEach(doc => {
-        const s = doc.data();
-        s.id = doc.id;
-        s.rating = s.noGo > 0 ? -100 : (s.votes ? s.total / s.votes : 0);
-        songs.push(s);
+// Projekte anzeigen
+onSnapshot(collection(db,"projects"), snapshot=>{
+    projectList.innerHTML="";
+    snapshot.forEach(docSnap=>{
+        const li=document.createElement("li");
+        li.textContent=docSnap.data().name;
+        li.style.cursor="pointer";
+        li.addEventListener("click", ()=>{
+            openProject(docSnap.id, docSnap.data().name);
+        });
+        projectList.appendChild(li);
     });
+});
 
-    // Voting-Liste
-    songs.forEach(song => {
-        const li = document.createElement("li");
-        li.className = "song";
-        if (song.noGo > 0) li.classList.add("noGo");
+// ---------------- Songs ----------------
+const currentProjectSection = document.getElementById("currentProjectSection");
+const currentProjectNameSpan = document.getElementById("currentProjectName");
+const songInput = document.getElementById("songInput");
+const addSongBtn = document.getElementById("addSongBtn");
+const votingList = document.getElementById("votingList");
+const rankingList = document.getElementById("rankingList");
 
-        const title = document.createElement("strong");
-        title.textContent = song.title;
-        li.appendChild(title);
+addSongBtn.addEventListener("click", async ()=>{
+    const title = songInput.value.trim();
+    if (!title || !currentProject) return;
+    await addDoc(collection(db,"projects",currentProject,"songs"),{
+        title, total:0, votes:0, noGo:0
+    });
+    songInput.value="";
+});
 
-        // Sterne-Buttons
-        [1,2,3,4,5].forEach(n => {
-            const btn = document.createElement("button");
-            btn.textContent = n;
-            btn.addEventListener("click", () => vote(song.id, n));
-            li.appendChild(btn);
+function openProject(projectId,name){
+    currentProject=projectId;
+    currentProjectNameSpan.textContent=name;
+    currentProjectSection.style.display="block";
+    loadSongs(projectId);
+}
+
+function loadSongs(projectId){
+    const songCol = collection(db,"projects",projectId,"songs");
+    onSnapshot(songCol,snapshot=>{
+        votingList.innerHTML="";
+        rankingList.innerHTML="";
+        const songs=[];
+        snapshot.forEach(docSnap=>{
+            const s = docSnap.data();
+            s.id = docSnap.id;
+            s.rating = s.noGo>0?-100:(s.votes?s.total/s.votes:0);
+            songs.push(s);
         });
 
-        // No-Go Button
-        const noBtn = document.createElement("button");
-        noBtn.textContent = "🚫";
-        noBtn.className = "no";
-        noBtn.addEventListener("click", () => vote(song.id, "no"));
-        li.appendChild(noBtn);
+        songs.forEach(song=>{
+            const li = document.createElement("li");
+            li.className="song";
+            if(song.noGo>0) li.classList.add("noGo");
+            const titleEl=document.createElement("strong");
+            titleEl.textContent=song.title;
+            li.appendChild(titleEl);
 
-        // Delete Button
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "🗑️";
-        delBtn.className = "delete";
-        delBtn.addEventListener("click", () => vote(song.id, "delete"));
-        li.appendChild(delBtn);
+            // Voting Buttons
+            [1,2,3,4,5].forEach(n=>{
+                const btn=document.createElement("button");
+                btn.textContent=n;
+                btn.addEventListener("click", ()=>vote(song.id,n));
+                li.appendChild(btn);
+            });
 
-        votingList.appendChild(li);
+            // No-Go Button
+            const noBtn = document.createElement("button");
+            noBtn.textContent="🚫";
+            noBtn.className="no";
+            noBtn.addEventListener("click", ()=>vote(song.id,"no"));
+            li.appendChild(noBtn);
+
+            // Delete Button
+            const delBtn=document.createElement("button");
+            delBtn.textContent="🗑️";
+            delBtn.className="delete";
+            delBtn.addEventListener("click", ()=>vote(song.id,"delete"));
+            li.appendChild(delBtn);
+
+            votingList.appendChild(li);
+        });
+
+        // Ranking sortieren
+        songs.sort((a,b)=>b.rating-a.rating).forEach((song,index)=>{
+            const li = document.createElement("li");
+            li.className="song";
+            li.innerHTML=`<strong>#${index+1} ${song.title}</strong> <div class="rating">⭐ ${song.rating.toFixed(2)}</div>`;
+            rankingList.appendChild(li);
+        });
     });
-
-    // Ranking-Liste sortiert
-    songs.sort((a,b) => b.rating - a.rating).forEach((song,index) => {
-        const li = document.createElement("li");
-        li.className = "song";
-        li.innerHTML = `<strong>#${index+1} ${song.title}</strong> <div class="rating">⭐ ${song.rating.toFixed(2)}</div>`;
-        rankingList.appendChild(li);
-    });
-});
+}
 
 // ---------------- Voting Funktion ----------------
-function vote(id, value) {
-    const voted = JSON.parse(localStorage.getItem("votedSongs") || "[]");
+function vote(songId,value){
+    if(!currentProject) return;
+    const votedKey="votedSongs_"+currentProject;
+    const voted=JSON.parse(localStorage.getItem(votedKey)||"[]");
 
-    if (value !== "delete" && voted.includes(id)) {
+    if(value!=="delete" && voted.includes(songId)){
         alert("Du hast bereits für diesen Song abgestimmt!");
         return;
     }
 
-    const ref = db.collection("songs").doc(id);
+    const ref = doc(db,"projects",currentProject,"songs",songId);
 
-    if (value === "no") {
-        ref.update({ noGo: firebase.firestore.FieldValue.increment(1) });
-    } else if (value === "delete") {
-        if (confirm("Willst du diesen Song wirklich löschen?")) {
-            ref.delete();
+    if(value==="no"){
+        updateDoc(ref,{noGo:increment(1)});
+    }else if(value==="delete"){
+        if(confirm("Willst du diesen Song wirklich löschen?")){
+            deleteDoc(ref);
         }
         return;
-    } else {
-        ref.update({
-            total: firebase.firestore.FieldValue.increment(value),
-            votes: firebase.firestore.FieldValue.increment(1)
-        });
-        voted.push(id);
-        localStorage.setItem("votedSongs", JSON.stringify(voted));
+    }else{
+        updateDoc(ref,{total:increment(value), votes:increment(1)});
+        voted.push(songId);
+        localStorage.setItem(votedKey,JSON.stringify(voted));
     }
 }

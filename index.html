@@ -1,35 +1,36 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Song Voting</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Song Voting Pro</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button id="darkModeToggle">🌙 Dark Mode</button>
 
-    <h1>🎵 Song Voting</h1>
+<button id="darkModeToggle">🌙 Dark Mode</button>
+<h1>🎵 Song Voting Pro</h1>
 
-    <section class="card">
-        <h2>➕ Song hinzufügen</h2>
-        <input id="songInput" placeholder="Songtitel">
-        <button class="primary" id="addSongBtn">Hinzufügen</button>
-    </section>
+<section class="card">
+    <h2>➕ Neues Projekt erstellen</h2>
+    <input id="projectInput" placeholder="Projektname">
+    <button class="primary" id="addProjectBtn">Projekt erstellen</button>
+</section>
 
-    <section class="card">
-        <h2>🗳️ Abstimmen / Löschen</h2>
-        <ul id="votingList"></ul>
-    </section>
+<section class="card">
+    <h2>📂 Projekte</h2>
+    <ul id="projectList"></ul>
+</section>
 
-    <section class="card">
-        <h2>🏆 Ranking</h2>
-        <ul id="rankingList"></ul>
-    </section>
+<section class="card" id="currentProjectSection" style="display:none;">
+    <h2>🎶 Songs in Projekt: <span id="currentProjectName"></span></h2>
+    <input id="songInput" placeholder="Songtitel">
+    <button class="primary" id="addSongBtn">Song hinzufügen</button>
+    <ul id="votingList"></ul>
+    <h3>🏆 Ranking</h3>
+    <ul id="rankingList"></ul>
+</section>
 
-    <script src="script.js"></script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
