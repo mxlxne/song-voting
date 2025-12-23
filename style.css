@@ -62,6 +62,7 @@ input {
     background: #fff;
 }
 
+/* No-Go Songs */
 .song.noGo {
     opacity: 0.4;
     background: #eee;
@@ -70,6 +71,19 @@ input {
 .rating {
     font-size: 14px;
     opacity: 0.7;
+}
+
+/* Mobile Buttons nebeneinander */
+ul#votingList li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+}
+
+.song button {
+    flex: 1 1 40px;
+    min-width: 40px;
 }
 
 /* Dark Mode */

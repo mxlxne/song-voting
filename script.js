@@ -10,16 +10,16 @@ const firebaseConfig = {
   };
 
 
-// Firebase initialisieren
+
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Dark Mode Toggle
+// ---------------- Dark Mode ----------------
 document.getElementById("darkModeToggle").addEventListener("click", () => {
     document.body.classList.toggle("dark");
 });
 
-// Song hinzufügen
+// ---------------- Song hinzufügen ----------------
 document.getElementById("addSongBtn").addEventListener("click", () => {
     const input = document.getElementById("songInput");
     const title = input.value.trim();
@@ -35,7 +35,7 @@ document.getElementById("addSongBtn").addEventListener("click", () => {
     input.value = "";
 });
 
-// Voting & Ranking
+// ---------------- Voting & Ranking ----------------
 db.collection("songs").onSnapshot(snapshot => {
     const votingList = document.getElementById("votingList");
     const rankingList = document.getElementById("rankingList");
@@ -87,7 +87,7 @@ db.collection("songs").onSnapshot(snapshot => {
         votingList.appendChild(li);
     });
 
-    // Ranking-Liste (sortiert)
+    // Ranking-Liste sortiert
     songs.sort((a,b) => b.rating - a.rating).forEach((song,index) => {
         const li = document.createElement("li");
         li.className = "song";
@@ -96,7 +96,7 @@ db.collection("songs").onSnapshot(snapshot => {
     });
 });
 
-// Voting Funktion
+// ---------------- Voting Funktion ----------------
 function vote(id, value) {
     const voted = JSON.parse(localStorage.getItem("votedSongs") || "[]");
 
