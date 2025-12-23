@@ -17,6 +17,9 @@ body {
     padding: 16px;
     background: var(--bg);
     color: var(--text);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 h1 {
@@ -24,11 +27,12 @@ h1 {
     margin-bottom: 16px;
 }
 
-/* Views nur Fade-in/out */
+/* Views */
 .view {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.25s ease;
+    min-height: 400px; /* Höhe fixieren, um Lücke zu verhindern */
 }
 
 .view.active {
@@ -45,7 +49,6 @@ h1 {
     box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
-/* Compact card für Inputs */
 .card.compact {
     margin-top: 8px;
 }
@@ -69,9 +72,10 @@ button {
     cursor: pointer;
     font-weight: 600;
     transition: 0.2s ease;
-    min-width: 45px;
-    font-size: 1rem;
     flex-shrink: 0;
+    min-width: 45px;
+    min-height: 45px;
+    font-size: 1rem;
 }
 
 button.primary {
@@ -90,7 +94,6 @@ ul {
     margin: 0;
 }
 
-/* Projekt-Item */
 .project {
     display: flex;
     align-items: center;
@@ -118,13 +121,11 @@ ul {
     word-break: break-word;
 }
 
-/* Projekt löschen Button */
 .deleteProject {
     background: var(--danger);
     color: white;
     padding: 10px 12px;
     border-radius: 10px;
-    flex-shrink: 0;
 }
 
 /* Songs */
@@ -137,14 +138,21 @@ ul {
     margin-bottom: 10px;
 }
 
-/* Voting Row */
+/* Voting + Actions */
 .voteRow {
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
-    margin-top: 6px;
+    margin-top: 8px;
 }
 
+.voteRow button {
+    flex: 1 1 40px;
+    min-width: 40px;
+    min-height: 40px;
+}
+
+/* Voting Button Farben */
 .vote-1 { background:#374151; color:white; }
 .vote-2 { background:#2563eb; color:white; }
 .vote-3 { background:#3b82f6; color:white; }
@@ -191,21 +199,15 @@ ul {
     box-shadow: 0 8px 20px rgba(99,102,241,0.4);
 }
 
-/* Ranking list */
+/* Ranking */
 #rankingList li {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-    background: #1e293b;
+    justify-content: space-between;
+    align-items: center;
     padding: 8px 12px;
     border-radius: 12px;
+    background: #1e293b;
     margin-bottom: 6px;
-}
-
-/* Ranking Buttons */
-#rankingList li .voteRow {
-    margin-top: 0;
-    flex-wrap: nowrap;
 }
 
 /* Footer */
@@ -217,17 +219,9 @@ footer {
 }
 
 /* Responsive */
-@media (max-width: 900px) {
-    .voteRow {
-        justify-content: space-between;
-    }
-}
-
 @media (max-width: 600px) {
-    button.primary {
-        width: 100%;
-        margin-top: 6px;
+    .voteRow button {
         font-size: 0.95rem;
-        padding: 10px 12px;
+        padding: 10px;
     }
 }

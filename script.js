@@ -106,6 +106,7 @@ function renderSong(song) {
 
     const voteRow = document.createElement("div");
     voteRow.className = "voteRow";
+
     const existing = song.votes.find(v => v.userId === userId);
 
     for (let i = 1; i <= 5; i++) {
@@ -133,17 +134,20 @@ function renderSong(song) {
     del.className = "delete";
     del.onclick = async () => await deleteDoc(doc(db, "projects", currentProject, "songs", song.id));
 
-    li.append(voteRow, no, del);
+    voteRow.appendChild(no);
+    voteRow.appendChild(del);
+
+    li.appendChild(voteRow);
     votingList.appendChild(li);
 }
 
 function renderRanking(songs) {
-    songs.map(s => ({ ...s, avg: (!s.noGo && s.votes.length) ? s.votes.reduce((a,v) => a + v.value,0)/s.votes.length : null }))
+    songs.map(s => ({ ...s, avg: (!s.noGo && s.votes.length) ? s.votes.reduce((a,v)=>a+v.value,0)/s.votes.length : null }))
          .sort((a,b) => (b.avg ?? -1) - (a.avg ?? -1))
          .forEach(s => {
              const li = document.createElement("li");
              if (s.noGo) li.classList.add("rankNoGo");
-             li.innerHTML = `<span>${s.name} – ${s.avg === null ? "–" : s.avg.toFixed(2)}</span>`;
+             li.textContent = `${s.name} – ${s.avg === null ? "–" : s.avg.toFixed(2)}`;
              rankingList.appendChild(li);
          });
 }
