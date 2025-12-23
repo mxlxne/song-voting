@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebas
 import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } 
     from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyAN8XBT9NazVeIgC_0-e2MIFtV9vMFljsQ",
   authDomain: "song-voting-f0763.firebaseapp.com",
@@ -14,12 +15,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// User ID
 const userId = localStorage.getItem("userId") || (() => {
     const id = crypto.randomUUID();
     localStorage.setItem("userId", id);
     return id;
 })();
 
+// DOM Elemente
 const projectView = document.getElementById("projectView");
 const songView = document.getElementById("songView");
 
@@ -36,12 +39,14 @@ const backBtn = document.getElementById("backBtn");
 let currentProject = null;
 let unsubscribe = null;
 
+// Projekt erstellen
 createProjectBtn.onclick = async () => {
     if (!projectInput.value) return;
     await addDoc(collection(db, "projects"), { name: projectInput.value });
     projectInput.value = "";
 };
 
+// Projekte anzeigen
 onSnapshot(collection(db, "projects"), snap => {
     projectList.innerHTML = "";
     snap.forEach(p => {
@@ -58,7 +63,9 @@ onSnapshot(collection(db, "projects"), snap => {
         del.textContent = "🗑️";
         del.onclick = async e => {
             e.stopPropagation();
-            if (confirm("Projekt löschen?")) await deleteDoc(doc(db, "projects", p.id));
+            if (confirm(`Projekt "${p.data().name}" wirklich löschen?`)) {
+                await deleteDoc(doc(db, "projects", p.id));
+            }
         };
 
         project.onclick = () => openProject(p.id);
@@ -69,6 +76,7 @@ onSnapshot(collection(db, "projects"), snap => {
     });
 });
 
+// Projekt öffnen
 function openProject(id) {
     currentProject = id;
     projectView.classList.remove("active");
@@ -76,18 +84,21 @@ function openProject(id) {
     listenSongs();
 }
 
+// Zurück zu Projekten
 backBtn.onclick = () => {
     if (unsubscribe) unsubscribe();
     songView.classList.remove("active");
     projectView.classList.add("active");
 };
 
+// Song hinzufügen
 addSongBtn.onclick = async () => {
     if (!songInput.value) return;
     await addDoc(collection(db, "projects", currentProject, "songs"), { name: songInput.value, votes: [], noGo: false });
     songInput.value = "";
 };
 
+// Songs überwachen
 function listenSongs() {
     unsubscribe = onSnapshot(collection(db, "projects", currentProject, "songs"), snap => {
         votingList.innerHTML = "";
@@ -99,6 +110,7 @@ function listenSongs() {
     });
 }
 
+// Einzelnen Song rendern
 function renderSong(song) {
     const li = document.createElement("li");
     li.className = "song" + (song.noGo ? " noGo" : "");
@@ -107,8 +119,8 @@ function renderSong(song) {
     const voteRow = document.createElement("div");
     voteRow.className = "voteRow";
 
+    // Voting Buttons 1-5
     const existing = song.votes.find(v => v.userId === userId);
-
     for (let i = 1; i <= 5; i++) {
         const b = document.createElement("button");
         b.textContent = i;
@@ -124,15 +136,23 @@ function renderSong(song) {
         voteRow.appendChild(b);
     }
 
+    // NoGo Button
     const no = document.createElement("button");
     no.textContent = "🚫";
     no.className = "no";
-    no.onclick = async () => await updateDoc(doc(db, "projects", currentProject, "songs", song.id), { noGo: !song.noGo });
+    no.onclick = async () => {
+        await updateDoc(doc(db, "projects", currentProject, "songs", song.id), { noGo: !song.noGo });
+    };
 
+    // Löschen Button
     const del = document.createElement("button");
     del.textContent = "🗑️";
     del.className = "delete";
-    del.onclick = async () => await deleteDoc(doc(db, "projects", currentProject, "songs", song.id));
+    del.onclick = async () => {
+        if (confirm(`Song "${song.name}" wirklich löschen?`)) {
+            await deleteDoc(doc(db, "projects", currentProject, "songs", song.id));
+        }
+    };
 
     voteRow.appendChild(no);
     voteRow.appendChild(del);
@@ -141,6 +161,7 @@ function renderSong(song) {
     votingList.appendChild(li);
 }
 
+// Ranking rendern
 function renderRanking(songs) {
     songs.map(s => ({ ...s, avg: (!s.noGo && s.votes.length) ? s.votes.reduce((a,v)=>a+v.value,0)/s.votes.length : null }))
          .sort((a,b) => (b.avg ?? -1) - (a.avg ?? -1))

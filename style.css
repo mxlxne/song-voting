@@ -174,13 +174,18 @@ ul {
 }
 
 .song.noGo {
-    opacity: 0.5;
+    opacity: 0.7; /* leichtes Ausgrauen */
+    background: #1a1f2f; /* dunkler Hintergrund für NoGo */
+    transition: background 0.3s ease, opacity 0.3s ease;
 }
 
 .rankNoGo {
     text-decoration: line-through;
-    opacity: 0.5;
+    color: #888888; /* dezentes Grau */
+    opacity: 0.7;
+    transition: color 0.3s ease, opacity 0.3s ease;
 }
+
 
 /* Back button */
 .backBtn {
