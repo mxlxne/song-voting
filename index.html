@@ -11,16 +11,26 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <h1>🎵 Song Voting</h1>
 
-<div id="add">
-    <input id="songInput" placeholder="Songtitel eingeben">
-    <button onclick="addSong()">Hinzufügen</button>
-</div>
+<button id="darkModeToggle" onclick="toggleDarkMode()">🌙 Dark Mode</button>
 
-<ul id="songList"></ul>
+<section class="card">
+    <h2>➕ Song hinzufügen</h2>
+    <input id="songInput" placeholder="Songtitel">
+    <button class="primary" onclick="addSong()">Hinzufügen</button>
+</section>
 
-<script src="script.js"></script>
+<section class="card">
+    <h2>🗳️ Abstimmen / Löschen</h2>
+    <ul id="votingList"></ul>
+</section>
+
+<section class="card">
+    <h2>🏆 Ranking</h2>
+    <ul id="rankingList"></ul>
+</section>
+
+
 </body>
 </html>
