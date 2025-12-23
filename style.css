@@ -1,115 +1,154 @@
-html {
-    overflow-y: scroll; /* reserviert Platz für Scrollbar, verhindert Layout‑Jump */ 
-}
-
-body {
-    margin: 0;
-    padding: 16px;
-    font-family: system-ui, sans-serif;
-    background: #0f172a;
-    color: #e5e7eb;
-    display: flex;
-    flex-direction: column;
-    height: 100vh; 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, sans-serif;
+  background: #0f172a;
+  color: #e5e7eb;
+  overflow: hidden; /* Verhindert Scroll-Bouncing */
 }
 
 h1 {
-    text-align: center;
-    margin-bottom: 16px;
+  text-align: center;
+  margin: 16px 0;
 }
 
-.container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0; /* wichtig für flex scrolling */
+.view-container {
+  position: relative;
+  flex: 1;
+  height: calc(100% - 64px); /* Header/Footer berücksichtigen */
 }
 
-/* Views überlagern sich, nur opacity ändert */
 .view {
-    flex: 1;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 16px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .view.active {
-    opacity: 1;
-    pointer-events: auto;
+  opacity: 1;
+  pointer-events: auto;
 }
 
-/* Listen scrollen immer */
-ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    flex: 1;
-    overflow-y: auto;
-}
-
-/* Cards */
 .card {
-    background: #1e293b;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
 }
 
-/* Buttons */
+.card.compact {
+  margin-top: 8px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 10px;
+  background: #020617;
+  color: #e5e7eb;
+}
+
 button {
-    padding: 10px 14px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: transform 0.15s ease;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease;
+  font-size: 1rem;
 }
 
 button:active {
-    transform: scale(0.97);
+  transform: scale(0.97);
 }
 
 .primary {
-    background: #6366f1;
-    color: white;
+  background: #6366f1;
+  color: white;
 }
 
 .backBtn {
-    background: #818cf8;
-    color: white;
-    margin-bottom: 12px;
+  background: #818cf8;
+  color: white;
+  margin-bottom: 12px;
+}
+
+/* Projektliste */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.project {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  margin-bottom: 6px;
+  background: #020617;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.project:hover {
+  background: rgba(99,102,241,0.15);
 }
 
 /* Songs */
 .song {
-    padding: 10px;
-    margin-bottom: 10px;
-    background: #020617;
-    border-radius: 10px;
-    transition: opacity 0.25s ease, transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #020617;
+  border-radius: 10px;
+  transition: opacity 0.25s ease;
 }
 
 .song.noGo {
-    opacity: 0.6;
+  opacity: 0.6;
+  text-decoration: line-through;
+  color: #aaa;
 }
 
-/* Voting row */
 .voteRow {
-    display: flex;
-    gap: 6px;
-    margin-top: 8px;
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
 }
 
 .voteRow button {
-    flex: 1;
+  flex: 1;
+  min-height: 40px;
 }
 
 /* Ranking */
 #rankingList li {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-    background: #1e293b;
-    padding: 8px;
-    border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  background: #1e293b;
+  padding: 8px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+}
+
+footer {
+  text-align: center;
+  opacity: 0.35;
+  padding: 8px 0;
+  font-size: 0.8rem;
 }
