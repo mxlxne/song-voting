@@ -19,6 +19,7 @@ body {
     color: var(--text);
 }
 
+/* Header */
 h1 {
     text-align: center;
     margin-bottom: 20px;
@@ -27,18 +28,16 @@ h1 {
 /* Views */
 .view {
     opacity: 0;
-    transform: scale(0.98);
     pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.25s ease;
 }
 
 .view.active {
     opacity: 1;
-    transform: scale(1);
     pointer-events: auto;
 }
 
-/* Cards */
+/* Card Container */
 .card {
     background: var(--card);
     border-radius: 16px;
@@ -47,7 +46,7 @@ h1 {
     box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
-/* Compact input card */
+/* Compact card für Inputs */
 .card.compact {
     margin-top: 8px;
 }
@@ -74,6 +73,7 @@ button {
     flex-shrink: 0;
 }
 
+/* Primäre Buttons */
 button.primary {
     background: var(--accent);
     color: white;
@@ -83,40 +83,34 @@ button.primary:hover {
     box-shadow: 0 0 0 4px var(--accent-soft);
 }
 
-/* Lists */
+/* Projekt-Liste */
 ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-li {
-    background: #020617;
-    margin-bottom: 10px;
-    padding: 12px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-/* Projekte */
+/* Projekt-Item */
 .project {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    flex: 1;
     padding: 14px;
     border-radius: 12px;
     cursor: pointer;
+    background: #020617;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.project:hover {
+    background: rgba(99,102,241,0.15);
+    transform: scale(1.01);
 }
 
 .project.selected {
     outline: 2px solid var(--accent);
-    background: rgba(99,102,241,0.15);
+    background: rgba(99,102,241,0.2);
 }
 
 .projectName {
@@ -124,28 +118,40 @@ li {
     word-break: break-word;
 }
 
-/* Projekt löschen */
+/* Projekt löschen Button */
 .deleteProject {
     background: var(--danger);
     color: white;
     padding: 10px 12px;
     border-radius: 10px;
+    flex-shrink: 0;
 }
 
 /* Songs */
 .song {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
+    background: #020617;
+    padding: 12px;
+    border-radius: 14px;
+    margin-bottom: 10px;
 }
 
+/* Voting Row */
 .voteRow {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+    display: flex;
     gap: 6px;
-    width: 100%;
+    flex-wrap: wrap;
     margin-top: 6px;
 }
 
+.voteRow button {
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Voting Buttons Farbcode */
 .vote-1 { background:#374151; color:white; }
 .vote-2 { background:#2563eb; color:white; }
 .vote-3 { background:#3b82f6; color:white; }
@@ -166,7 +172,7 @@ li {
     color: white;
 }
 
-/* noGo */
+/* noGo Songs */
 .song.noGo {
     opacity: 0.5;
 }
@@ -199,4 +205,18 @@ footer {
     opacity: 0.35;
     margin-top: 30px;
     font-size: 0.8rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .voteRow {
+        justify-content: space-between;
+    }
+    .deleteProject {
+        padding: 8px 10px;
+    }
+    button.primary {
+        width: 100%;
+        margin-top: 6px;
+    }
 }
