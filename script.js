@@ -1,24 +1,22 @@
-// --- Firebase Module Imports ---
-// --- Firebase ES Module Imports ---
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import {getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, increment 
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+// Imports müssen ganz oben stehen
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, increment } 
+    from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-
-// --- Firebase Config --- (MUSS VOR initializeApp stehen)
+// Firebase Config
 const firebaseConfig = {
- apiKey: "AIzaSyAN8XBT9NazVeIgC_0-e2MIFtV9vMFljsQ",
-    authDomain: "song-voting-f0763.firebaseapp.com",
-    projectId: "song-voting-f0763",
-    storageBucket: "song-voting-f0763.firebasestorage.app",
-    messagingSenderId: "270124010704",
-    appId: "1:270124010704:web:c31060bf57563de96e22d5",
-    measurementId: "G-FHHKR740EY"
+  apiKey: "AIzaSyAN8XBT9NazVeIgC_0-e2MIFtV9vMFljsQ",
+  authDomain: "song-voting-f0763.firebaseapp.com",
+  projectId: "song-voting-f0763",
+  storageBucket: "song-voting-f0763.firebasestorage.app",
+  messagingSenderId: "270124010704",
+  appId: "1:270124010704:web:c31060bf57563de96e22d5"
 };
 
-// --- Firebase App initialisieren ---
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
 
 // ---------------- Dark Mode ----------------
 document.getElementById("darkModeToggle").addEventListener("click", () => {
