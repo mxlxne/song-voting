@@ -1,55 +1,49 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Song Voting</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Voting</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <h1>🎶 Song Voting</h1>
 
-<div class="container">
-  <div id="projectView" class="view active">
+<div id="projectView" class="view active">
     <div class="card">
-      <h2>Projekt erstellen</h2>
-      <input id="projectInput" placeholder="Projektname">
-      <button id="createProjectBtn" class="primary">Projekt erstellen</button>
-    </div>
-    <div class="card">
-      <h2>Projekte</h2>
-      <ul id="projectList"></ul>
-    </div>
-  </div>
-
-  <div id="songView" class="view">
-    <button id="backBtn" class="backBtn">
-      <span class="arrow">←</span>
-      <span>Projekte</span>
-    </button>
-
-    <div class="card compact">
-      <h2>Lied hinzufügen</h2>
-      <input id="songInput" placeholder="Songname">
-      <button id="addSongBtn" class="primary">Lied hinzufügen</button>
+        <h2>Projekt erstellen</h2>
+        <input id="projectInput" placeholder="Projektname">
+        <button id="createProjectBtn" class="primary">Projekt erstellen</button>
     </div>
 
     <div class="card">
-      <h2>Abstimmung</h2>
-      <ul id="votingList"></ul>
+        <h2>Projekte</h2>
+        <ul id="projectList"></ul>
     </div>
-
-    <div class="card">
-      <h2>Ranking</h2>
-      <ul id="rankingList"></ul>
-    </div>
-  </div>
 </div>
 
-<footer>
-  <span>Second Wave – Menger</span>
-</footer>
+<div id="songView" class="view">
+    <button id="backBtn" class="backBtn">← Projekte</button>
+
+    <div class="card compact">
+        <h2>Lied hinzufügen</h2>
+        <input id="songInput" placeholder="Songname">
+        <button id="addSongBtn" class="primary">Lied hinzufügen</button>
+    </div>
+
+    <div class="card">
+        <h2>Abstimmung</h2>
+        <ul id="votingList"></ul>
+    </div>
+
+    <div class="card">
+        <h2>Ranking</h2>
+        <ul id="rankingList"></ul>
+    </div>
+</div>
+
+<footer>Second Wave – Menger</footer>
 
 <script type="module" src="script.js"></script>
 </body>
