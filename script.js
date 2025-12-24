@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } 
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot }
 from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -179,7 +179,7 @@ function renderRanking(songs) {
             const li = document.createElement("li");
             li.className = "rankItem" + (s.noGo ? " rankNoGo" : "");
             li.innerHTML = `
-                <span class="rankPos">#${i + 1}</span>
+                <span class="rankPos">${i + 1}</span>
                 <span class="rankName">${s.name}</span>
                 <span class="rankScore">${s.avg === null ? "–" : s.avg.toFixed(2)}</span>
             `;
