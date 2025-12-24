@@ -1,46 +1,53 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Song Voting</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Voting</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-  <h1>🎵 Song Voting</h1>
-</header>
+<h1>🎶 Song Voting</h1>
 
-<main id="app">
-
-  <section id="project-section">
-    <h2>Projekt</h2>
-    <input id="projectInput" placeholder="Projektname">
-    <button id="addProjectBtn">Projekt erstellen</button>
-    <div id="projectList"></div>
-  </section>
-
-  <section id="song-section" class="hidden">
-    <div class="song-header">
-      <button id="backBtn">← Zurück</button>
-      <h2 id="currentProject"></h2>
-      <button id="lockVotingBtn">Voting abschließen</button>
+<div id="projectView" class="view active">
+    <div class="card">
+        <h2>Projekt erstellen</h2>
+        <input id="projectInput" placeholder="Projektname">
+        <button id="createProjectBtn" class="primary">Projekt erstellen</button>
     </div>
 
-    <input id="songInput" placeholder="Songname">
-    <button id="addSongBtn">Song hinzufügen</button>
+    <div class="card">
+        <h2>Projekte</h2>
+        <ul id="projectList"></ul>
+    </div>
+</div>
 
-    <ul id="songList"></ul>
-  </section>
+<div id="songView" class="view">
+    <button id="backBtn" class="backBtn">← Projekte</button>
 
-  <section id="ranking-section" class="hidden">
-    <h2>🏆 Ranking</h2>
-    <ul id="rankingList"></ul>
-  </section>
+    <div class="card compact">
+        <h2>Lied hinzufügen</h2>
+        <input id="songInput" placeholder="Songname">
+        <button id="addSongBtn" class="primary">Lied hinzufügen</button>
+    </div>
 
-</main>
+    <div class="card">
+        <h2>Abstimmung</h2>
+        <ul id="votingList"></ul>
+    </div>
 
-<script src="script.js"></script>
+    <div class="card">
+        <div class="cardHeader">
+            <h2>Ranking</h2>
+            <button id="exportRankingBtn" class="secondary">Ranking exportieren</button>
+        </div>
+        <ul id="rankingList"></ul>
+    </div>
+</div>
+
+<footer>Second Wave – Menger</footer>
+
+<script type="module" src="script.js"></script>
 </body>
 </html>
