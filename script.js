@@ -1,72 +1,150 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, where, getDocs } 
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } 
 from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-const firebaseConfig={apiKey:"AIzaSyAN8XBT9NazVeIgC_0-e2MIFtV9vMFljsQ",authDomain:"song-voting-f0763.firebaseapp.com",projectId:"song-voting-f0763"};
-const app=initializeApp(firebaseConfig); const db=getFirestore(app);
-const userId=localStorage.getItem("userId")||(()=>{const id=crypto.randomUUID(); localStorage.setItem("userId",id); return id;})();
+const firebaseConfig = {
+  apiKey: "AIzaSyAN8XBT9NazVeIgC_0-e2MIFtV9vMFljsQ",
+  authDomain: "song-voting-f0763.firebaseapp.com",
+  projectId: "song-voting-f0763"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-const projectView=document.getElementById("projectView"), songView=document.getElementById("songView");
-const projectList=document.getElementById("projectList"), votingList=document.getElementById("votingList"), rankingList=document.getElementById("rankingList");
+const userId = localStorage.getItem("userId") || (() => {
+  const id = crypto.randomUUID();
+  localStorage.setItem("userId", id);
+  return id;
+})();
 
-let currentProject=null;
+const projectView = document.getElementById("projectView");
+const songView = document.getElementById("songView");
+const projectInput = document.getElementById("projectInput");
+const createProjectBtn = document.getElementById("createProjectBtn");
+const projectList = document.getElementById("projectList");
+const songInput = document.getElementById("songInput");
+const addSongBtn = document.getElementById("addSongBtn");
+const votingList = document.getElementById("votingList");
+const rankingList = document.getElementById("rankingList");
+const backBtn = document.getElementById("backBtn");
 
-document.getElementById("createProjectBtn").onclick=async()=>{
-  const name=document.getElementById("projectInput").value.trim();
-  if(!name) return;
-  const q=query(collection(db,"projects"),where("name","==",name));
-  const snap=await getDocs(q); if(!snap.empty){alert("Projekt existiert bereits!"); return;}
-  await addDoc(collection(db,"projects"),{name}); document.getElementById("projectInput").value="";
+let currentProject = null;
+let unsubscribe = null;
+let selectedProject = null;
+
+createProjectBtn.onclick = async () => {
+  if(!projectInput.value) return;
+  await addDoc(collection(db,"projects"),{name:projectInput.value});
+  projectInput.value="";
 };
 
 onSnapshot(collection(db,"projects"),snap=>{
   projectList.innerHTML="";
   snap.forEach(p=>{
-    const li=document.createElement("li"); li.className="project"; li.textContent=p.data().name;
-    li.onclick=()=>openProject(p.id); projectList.appendChild(li);
+    const li = document.createElement("li");
+    const project = document.createElement("div");
+    project.className="project";
+    const name = document.createElement("div");
+    name.className="projectName";
+    name.textContent = p.data().name;
+
+    const del = document.createElement("button");
+    del.className="deleteProject";
+    del.textContent="🗑️";
+    del.onclick = async e => { e.stopPropagation(); if(confirm("Projekt löschen?")) await deleteDoc(doc(db,"projects",p.id)); };
+
+    project.onclick = () => {
+      if(selectedProject === p.id) openProject(p.id);
+      else {
+        selectedProject = p.id;
+        document.querySelectorAll(".project").forEach(el => el.classList.remove("selected"));
+        project.classList.add("selected");
+      }
+    };
+
+    project.append(name, del);
+    li.appendChild(project);
+    projectList.appendChild(li);
   });
 });
 
-function openProject(id){currentProject=id; projectView.classList.remove("active"); songView.classList.add("active"); listenSongs(id);}
-document.getElementById("backBtn").onclick=()=>{songView.classList.remove("active"); projectView.classList.add("active");}
+function openProject(id){
+  currentProject = id;
+  projectView.classList.remove("active");
+  songView.classList.add("active");
+  listenSongs();
+}
 
-function listenSongs(projectId){
-  onSnapshot(collection(db,"projects",projectId,"songs"),snap=>{
-    votingList.innerHTML=""; rankingList.innerHTML="";
-    snap.forEach(s=>renderSong(s.id,s.data(),projectId));
-    renderRanking(snap);
+backBtn.onclick = () => {
+  if(unsubscribe) unsubscribe();
+  songView.classList.remove("active");
+  projectView.classList.add("active");
+  selectedProject=null;
+};
+
+addSongBtn.onclick = async ()=>{
+  if(!songInput.value) return;
+  await addDoc(collection(db,"projects",currentProject,"songs"),{name:songInput.value,votes:[],noGo:false});
+  songInput.value="";
+};
+
+function listenSongs(){
+  unsubscribe = onSnapshot(collection(db,"projects",currentProject,"songs"),snap=>{
+    votingList.innerHTML="";
+    rankingList.innerHTML="";
+    const songs = [];
+    snap.forEach(s=>songs.push({id:s.id,...s.data()}));
+    songs.forEach(renderSong);
+    renderRanking(songs);
   });
 }
 
-function renderSong(id,data,projectId){
-  const li=document.createElement("li"); li.className="song"; if(data.noGo) li.classList.add("noGo"); li.textContent=data.name;
-  const row=document.createElement("div"); row.className="voteRow";
+function renderSong(song){
+  const li = document.createElement("li");
+  li.className = "song" + (song.noGo?" noGo":"");
+  li.innerHTML = `<strong>${song.name}</strong>`;
+
+  const voteRow = document.createElement("div");
+  voteRow.className="voteRow";
+
+  const existing = song.votes.find(v=>v.userId===userId);
 
   for(let i=1;i<=5;i++){
-    const btn=document.createElement("button"); btn.textContent=i; btn.className="vote-"+i;
-    btn.onclick=async()=>{
-      const votes=[...(data.votes||[])]; const found=votes.find(x=>x.userId===userId);
-      if(found) found.value=i; else votes.push({userId,value:i});
-      await updateDoc(doc(db,"projects",projectId,"songs",id),{votes});
-    }
-    row.appendChild(btn);
+    const b = document.createElement("button");
+    b.textContent=i;
+    b.className=`vote-${i}`;
+    if(existing?.value===i) b.classList.add("activeVote");
+    b.onclick=async ()=>{
+      let votes=[...song.votes];
+      const found=votes.find(v=>v.userId===userId);
+      if(found) found.value=i;
+      else votes.push({userId,value:i});
+      await updateDoc(doc(db,"projects",currentProject,"songs",song.id),{votes});
+    };
+    voteRow.appendChild(b);
   }
 
-  const no=document.createElement("button"); no.textContent="🚫"; no.className="noGoBtn"; 
-  no.onclick=async()=>{await updateDoc(doc(db,"projects",projectId,"songs",id),{noGo:!data.noGo});}
+  const no = document.createElement("button");
+  no.textContent="🚫";
+  no.className="no";
+  no.onclick=async()=>{await updateDoc(doc(db,"projects",currentProject,"songs",song.id),{noGo:!song.noGo});};
 
-  const del=document.createElement("button"); del.textContent="🗑️"; del.className="delBtn";
-  del.onclick=async()=>{if(confirm("Song wirklich löschen?")) await deleteDoc(doc(db,"projects",projectId,"songs",id));}
+  const del = document.createElement("button");
+  del.textContent="🗑️";
+  del.className="delete";
+  del.onclick=async()=>{if(confirm("Song wirklich löschen?")) await deleteDoc(doc(db,"projects",currentProject,"songs",song.id));};
 
-  row.appendChild(no); row.appendChild(del); li.appendChild(row); votingList.appendChild(li);
+  voteRow.append(no,del);
+  li.appendChild(voteRow);
+  votingList.appendChild(li);
 }
 
-function renderRanking(songs){rankingList.innerHTML=""; songs.forEach(s=>{const avg=s.data().votes?.reduce((a,v)=>a+v.value,0)/s.data().votes?.length; const li=document.createElement("li"); li.textContent=`${s.data().name} – ${avg?.toFixed(2)??"-"}`; rankingList.appendChild(li);})}
-
-document.getElementById("addSongBtn").onclick=async()=>{
-  const name=document.getElementById("songInput").value.trim(); if(!name) return;
-  if(!currentProject){alert("Kein Projekt ausgewählt!"); return;}
-  const q=query(collection(db,"projects",currentProject,"songs"),where("name","==",name));
-  const snap=await getDocs(q); if(!snap.empty){alert("Song existiert bereits!"); return;}
-  await addDoc(collection(db,"projects",currentProject,"songs"),{name,votes:[],noGo:false}); document.getElementById("songInput").value="";
+function renderRanking(songs){
+  songs.map(s=>({...s, avg:(!s.noGo && s.votes.length)?s.votes.reduce((a,v)=>a+v.value,0)/s.votes.length:null}))
+       .sort((a,b)=>(b.avg??-1)-(a.avg??-1))
+       .forEach(s=>{
+         const li=document.createElement("li");
+         if(s.noGo) li.classList.add("rankNoGo");
+         li.innerHTML=`<span>${s.name}</span> <span>${s.avg===null?"–":s.avg.toFixed(2)}</span>`;
+         rankingList.appendChild(li);
+       });
 }
